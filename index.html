@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kou - ç·ä¸é ç´ / ãªã³ã©ã¤ã³äºç´</title>
+  <title>Kou - 線上預約 / オンライン予約</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap');
     *{margin:0;padding:0;box-sizing:border-box}
@@ -60,7 +60,7 @@
     /* ===== USER BAR ===== */
     .user-bar{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem;background:rgba(255,255,255,.9);border-radius:8px;margin-bottom:1rem;font-size:.88rem;box-shadow:var(--shadow)}
     .user-bar .user-name{font-weight:600;color:var(--pri)}
-    .user-bar .user-name::before{content:'ð¤ '}
+    .user-bar .user-name::before{content:'👤 '}
     .logout-btn{background:none;border:1.5px solid var(--bdr);border-radius:5px;padding:3px 10px;font-size:.78rem;color:var(--txt-l);transition:.2s}
     .logout-btn:hover{border-color:var(--red);color:var(--red)}
 
@@ -269,12 +269,12 @@
 
 <!-- Lang Switcher -->
 <div class="lang-bar">
-  <button class="lang-btn" onclick="setLang('zh')">ä¸­æ</button>
-  <button class="lang-btn active" onclick="setLang('ja')">æ¥æ¬èª</button>
+  <button class="lang-btn" onclick="setLang('zh')">中文</button>
+  <button class="lang-btn active" onclick="setLang('ja')">日本語</button>
 </div>
 
 <!-- Admin FAB -->
-<button class="admin-fab" onclick="openAdminAuth()" title="ç®¡çä»é¢">â</button>
+<button class="admin-fab" onclick="openAdminAuth()" title="管理介面">⚙</button>
 
 <!-- ==================== STEP 0: LOGIN ==================== -->
 <div id="step0">
@@ -283,32 +283,32 @@
       <div class="login-top">
         <div class="avatar">K</div>
         <h1 style="font-size:1.6rem;font-weight:700;color:var(--pri);margin-bottom:.3rem">Kou</h1>
-        <p style="color:var(--txt-l);font-size:.9rem" data-zh="ç·ä¸å®¶æé ç´ç³»çµ±" data-ja="ãªã³ã©ã¤ã³åå¥æå°äºç´ã·ã¹ãã "></p>
+        <p style="color:var(--txt-l);font-size:.9rem" data-zh="線上家教預約系統" data-ja="オンライン個別指導予約システム"></p>
       </div>
       <div class="login-body">
-        <p id="loginSubtitle" style="text-align:center;margin-bottom:1.5rem;color:var(--txt-l);font-size:.9rem" data-zh="é¦æ¬¡ä½¿ç¨è«è¨»åå¸³è" data-ja="åãã¦ã®æ¹ã¯ã¢ã«ã¦ã³ãç»é²ãã¦ãã ãã"></p>
+        <p id="loginSubtitle" style="text-align:center;margin-bottom:1.5rem;color:var(--txt-l);font-size:.9rem" data-zh="首次使用請註冊帳號" data-ja="初めての方はアカウント登録してください"></p>
         <form onsubmit="doLogin(event)">
           <div class="fg" id="fgName">
-            <label data-zh="å§å" data-ja="æ°å"></label>
-            <input type="text" id="loginName" data-ph-zh="è«è¼¸å¥å§å" data-ph-ja="æ±åãå¥åãã¦ãã ãã" autocomplete="name">
+            <label data-zh="姓名" data-ja="氏名"></label>
+            <input type="text" id="loginName" data-ph-zh="請輸入姓名" data-ph-ja="汏名を入力してください" autocomplete="name">
           </div>
           <div class="fg">
-            <label data-zh="é»å­ä¿¡ç®±" data-ja="ã¡ã¼ã«ã¢ãã¬ã¹"></label>
-            <input type="email" id="loginEmail" required data-ph-zh="è«è¼¸å¥é»å­ä¿¡ç®±" data-ph-ja="ã¡ã¼ã«ã¢ãã¬ã¹ãå¥åãã¦ãã ãã" autocomplete="email">
+            <label data-zh="電子信箱" data-ja="メールアドレス"></label>
+            <input type="email" id="loginEmail" required data-ph-zh="請輸入電子信箱" data-ph-ja="メールアドレスを入力してください" autocomplete="email">
           </div>
           <div class="fg">
-            <label data-zh="å¯ç¢¼" data-ja="ãã¹ã¯ã¼ã"></label>
-            <input type="password" id="loginPass" required data-ph-zh="è«è¨­å®å¯ç¢¼ï¼è³å°4ä½ï¼" data-ph-ja="ãã¹ã¯ã¼ããè¨­å®ï¼4æå­ä»¥ä¸ï¼" autocomplete="new-password" minlength="4">
+            <label data-zh="密碼" data-ja="パスワード"></label>
+            <input type="password" id="loginPass" required data-ph-zh="請設定密碼（至少4位）" data-ph-ja="パスワードを設定（4文字以上）" autocomplete="new-password" minlength="4">
           </div>
           <div class="fg" id="fgPassConfirm">
-            <label data-zh="ç¢ºèªå¯ç¢¼" data-ja="ãã¹ã¯ã¼ãç¢ºèª"></label>
-            <input type="password" id="loginPassConfirm" data-ph-zh="è«åæ¬¡è¼¸å¥å¯ç¢¼" data-ph-ja="ãã¹ã¯ã¼ããåå¥å" autocomplete="new-password" minlength="4">
+            <label data-zh="確認密碼" data-ja="パスワード確認"></label>
+            <input type="password" id="loginPassConfirm" data-ph-zh="請再次輸入密碼" data-ph-ja="パスワードを再入力" autocomplete="new-password" minlength="4">
           </div>
           <p id="loginError" style="color:#e74c3c;font-size:.85rem;text-align:center;margin-bottom:.8rem;display:none"></p>
-          <button type="submit" class="login-btn" id="loginBtn" data-zh="è¨»å" data-ja="ç»é²"></button>
+          <button type="submit" class="login-btn" id="loginBtn" data-zh="註冊" data-ja="登録"></button>
         </form>
         <p style="text-align:center;margin-top:1rem;font-size:.85rem">
-          <a href="#" id="toggleMode" onclick="toggleLoginMode(event)" style="color:var(--pri);text-decoration:underline;cursor:pointer" data-zh="å·²æå¸³èï¼ç»å¥" data-ja="ã¢ã«ã¦ã³ãããæã¡ã®æ¹ã¯ã­ã°ã¤ã³"></a>
+          <a href="#" id="toggleMode" onclick="toggleLoginMode(event)" style="color:var(--pri);text-decoration:underline;cursor:pointer" data-zh="已有帳號？登入" data-ja="アカウントをお持ちの方はログイン"></a>
         </p>
       </div>
     </div>
@@ -323,26 +323,26 @@
     <div class="stu-avatar">K</div>
     <div class="stu-name-row">
       <div class="stu-name">
-        <span data-zh="åè­É¾òhÑµ©ô>_¢²oR¾òhøð½ÍÁ¸øñÍÁ¸¥ô¥ÍÁ9µøð½ÍÁ¸ø(ð½¥Øø(ñÕÑÑ½¸±ÍÌôÍÑÔµ±½½ÕÐ½¹±¥¬ô½1½½ÕÐ ¤Ñµé ôfïèÑµ©ô·
-Ã
-
- øð½ÕÑÑ½¸ø(ð½¥Øø(ð½¥Øø((ð´´QÝ¼µ½±Õµ¸±å½ÕÐ´´ø(ñ¥Ø±ÍÌôµ¥¸µ±å½ÕÐø((ð´´1Ðè
-±¹È
-É´´ø(ñ¥Ø±ÍÌô½°µ°ø(ñ¥Ø±ÍÌôÉø(ñ¥Ø±ÍÌôÍÑ¥½¸µÑ¥Ñ±ÍÑå±ô¥ÍÁ±äé±àí±¥¸µ¥ÑµÌé¹ÑÈíÀè¸ÕÉ´ø(ñÍÁ¸ûÂ~Nð½ÍÁ¸ø(ñÍÁ¸Ñµé ô¦ãN^r¢"fºÔÑµ©ô^f
-K¦ã*xøð½ÍÁ¸ø(ð½¥Øø(ñ¥Ø±ÍÌôÑèµÉ½Üø(ñÍÁ¸±ÍÌô±°Ñµé ô"æå" data-ja="ã¿ã¤ã ã¾ã¼ã³"></span>
+        <span data-zh="受譊ɾ�h����ф����>_��o�R��h����������������􉑥��9�����������(������𽑥��(���������ѽ����������Ե�����Ј��������􉑽1����Р�����ф���f�舁��ф������
+Î
+��
+�� �����ѽ��(����𽑥��(��𽑥��((�������Qݼ����յ������Ѐ���(���؁�����􉵅�������Ј�((���������1����
+������ȁ
+�ɐ����(�����؁�����􉍽�������(�������؁�����􉍅ɐ��(���������؁������͕�ѥ���ѥѱ�����屔􉑥�����陱��텱�����ѕ��鍕�ѕ�흅���ɕ���(�����������������~N������(������������������ф����N�^��r�"�f��Ԉ���ф����^��f�
+K��*x��������(��������𽑥��(���������؁��������ɽ܈�(���������������������􉱉�����ф���"時區" data-ja="タイムゾーン"></span>
           <span id="tzDisp">Asia/Tokyo (GMT+9)</span>
         </div>
         <!-- Mini Month Calendar -->
         <div id="miniCalWrap" style="margin-bottom:1.25rem"></div>
         <!-- Week Nav + Day Grid -->
         <div class="week-nav">
-          <button class="wk-btn" id="prevWk" onclick="chgWeek(-1)">â¹</button>
+          <button class="wk-btn" id="prevWk" onclick="chgWeek(-1)">‹</button>
           <span class="mo" id="moLabel"></span>
-          <button class="wk-btn" id="nextWk" onclick="chgWeek(1)">âº</button>
+          <button class="wk-btn" id="nextWk" onclick="chgWeek(1)">›</button>
         </div>
         <div class="day-grid" id="dayGrid"></div>
         <!-- Time Slots -->
-        <div id="tsArea"><div class="no-slot" data-zh="è«åé¸æä¸åæ¥æ" data-ja="æ¥ä»ãé¸æãã¦ãã ãã"></div></div>
+        <div id="tsArea"><div class="no-slot" data-zh="請先選擇一個日期" data-ja="日付を選択してください"></div></div>
       </div>
     </div>
 
@@ -350,10 +350,10 @@ K¦ã*xøð½ÍÁ¸ø(ð½¥Øø(ñ¥
     <div class="col-memo">
       <div class="card memo-card">
         <div class="memo-hdr">
-          <span style="font-size:1.2rem">ð</span>
-          <span class="memo-hdr-title" data-zh="å­¸ç¿é²åº¦åå¿" data-ja="å­¦ç¿é²æã¡ã¢"></span>
+          <span style="font-size:1.2rem">📚</span>
+          <span class="memo-hdr-title" data-zh="學習進度備忘" data-ja="学習進捗メモ"></span>
         </div>
-        <div class="memo-desc" data-zh="æ¯å èª²çåå¿æ¬ä½ï¼æ¹ä¾¿è¨éé²åº¦èä½æ¥­ã" data-ja="åã¬ãã¹ã³ãã¨ã®ã¡ã¢æ¬ã§ããé²æãå®¿é¡ã®è¨é²ã«ä¾¿å©ã§ãã"></div>
+        <div class="memo-desc" data-zh="每堂課的備忘欄位，方便記錄進度與作業。" data-ja="各レッスンごとのメモ欄です。進捗や宿題の記録に便利です。"></div>
         <div id="memoList"></div>
       </div>
     </div>
@@ -370,19 +370,19 @@ K¦ã*xøð½ÍÁ¸ø(ð½¥Øø(ñ¥
         <div class="d-meta"><div id="cfWd"></div><div id="cfMo"></div></div>
       </div>
       <div class="irow">
-        <span class="il" data-zh="èª²ç¨" data-ja="ææ¥­"></span>
-        <span class="iv"><span class="dot"></span><span data-zh="å®¶æèª²ç¨" data-ja="åå¥æå°"></span></span>
+        <span class="il" data-zh="課程" data-ja="授業"></span>
+        <span class="iv"><span class="dot"></span><span data-zh="家教課程" data-ja="個別指導"></span></span>
       </div>
       <div class="irow" style="margin-top:.25rem">
-        <span class="il" data-zh="æé" data-ja="æé"></span>
+        <span class="il" data-zh="時間" data-ja="時間"></span>
         <span class="iv" id="cfTime"></span>
       </div>
     </div>
     <div class="popup-body">
       <div class="who" id="cfWho"></div>
       <div class="popup-btns">
-        <button class="btn-cancel" onclick="closeConfirm()" data-zh="åæ¶" data-ja="ã­ã£ã³ã»ã«"></button>
-        <button class="btn-confirm" onclick="doBook()" data-zh="ç¢ºèªé ç´" data-ja="äºç´ç¢ºå®"></button>
+        <button class="btn-cancel" onclick="closeConfirm()" data-zh="取消" data-ja="キャンセル"></button>
+        <button class="btn-confirm" onclick="doBook()" data-zh="確認預約" data-ja="予約確定"></button>
       </div>
     </div>
   </div>
@@ -396,9 +396,9 @@ K¦ã*xøð½ÍÁ¸ø(ð½¥Øø(ñ¥
     <div class="stu-avatar">K</div>
     <div class="stu-name-row">
       <div class="stu-name">
-        <span data-zh="åè¬çï¼" data-ja="åè¬çï¼"></span><span id="dispName2"></span>
+        <span data-zh="受講生：" data-ja="受講生："></span><span id="dispName2"></span>
       </div>
-      <button class="stu-logout" onclick="doLogout()" data-zh="ç»åº" data-ja="ã­ã°ã¢ã¦ã"></button>
+      <button class="stu-logout" onclick="doLogout()" data-zh="登出" data-ja="ログアウト"></button>
     </div>
   </div>
 
@@ -408,12 +408,12 @@ K¦ã*xøð½ÍÁ¸ø(ð½¥Øø(ñ¥
     <!-- Left: Success Card -->
     <div class="col-cal">
       <div class="card anim" style="text-align:center;padding:2.2rem 1.5rem">
-        <div class="suc-icon">â</div>
-        <h2 style="font-size:1.4rem;margin-bottom:.4rem" data-zh="é ç´æåï¼" data-ja="äºç´å®äºï¼"></h2>
-        <p style="color:var(--txt-l);font-size:.9rem" data-zh="å·²æ¶å°æ¨çé ç´" data-ja="ãäºç´ãæ¿ãã¾ãã"></p>
-        <p style="font-size:.82rem;color:var(--txt-l);margin-bottom:1.2rem" data-zh="ç¢ºèªéç¥å°å¯éå°æ¨çä¿¡ç®±" data-ja="ç¢ºèªã¡ã¼ã«ããéããããã¾ã"></p>
+        <div class="suc-icon">✓</div>
+        <h2 style="font-size:1.4rem;margin-bottom:.4rem" data-zh="預約成功！" data-ja="予約完了！"></h2>
+        <p style="color:var(--txt-l);font-size:.9rem" data-zh="已收到您的預約" data-ja="ご予約を承りました"></p>
+        <p style="font-size:.82rem;color:var(--txt-l);margin-bottom:1.2rem" data-zh="確認通知將寄送到您的信箱" data-ja="確認メールをお送りいたします"></p>
         <div class="suc-det" id="sucDet"></div>
-        <button class="btn-out" onclick="backToCal()" data-zh="è¿åç¹¼çºé ç´" data-ja="äºç´ç»é¢ã«æ»ã"></button>
+        <button class="btn-out" onclick="backToCal()" data-zh="返回繼續預約" data-ja="予約画面に戻る"></button>
       </div>
     </div>
 
@@ -421,10 +421,10 @@ K¦ã*xøð½ÍÁ¸ø(ð½¥Øø(ñ¥
     <div class="col-memo">
       <div class="card memo-card">
         <div class="memo-hdr">
-          <span style="font-size:1.2rem">ð</span>
-          <span class="memo-hdr-title" data-zh="å­¸ç¿é²åº¦åå¿" data-ja="å­¦ç¿é²æã¡ã¢"></span>
+          <span style="font-size:1.2rem">📚</span>
+          <span class="memo-hdr-title" data-zh="學習進度備忘" data-ja="学習進捗メモ"></span>
         </div>
-        <div class="memo-desc" data-zh="æ¯å èª²çåå¿æ¬ä½ï¼æ¹ä¾¿è¨éé²åº¦èä½æ¥­ã" data-ja="åã¬ãã¹ã³ãã¨ã®ã¡ã¢æ¬ã§ããé²æãå®¿é¡ã®è¨é²ã«ä¾¿å©ã§ãã"></div>
+        <div class="memo-desc" data-zh="每堂課的備忘欄位，方便記錄進度與作業。" data-ja="各レッスンごとのメモ欄です。進捗や宿題の記録に便利です。"></div>
         <div id="memoList2"></div>
       </div>
     </div>
@@ -435,12 +435,12 @@ K¦ã*xøð½ÍÁ¸ø(ð½¥Øø(ñ¥
 <!-- ==================== PW MODAL ==================== -->
 <div id="pwOverlay" class="pw-overlay hidden">
   <div class="pw-box">
-    <h3 data-zh="ç®¡çèç»å¥" data-ja="ç®¡çèã­ã°ã¤ã³"></h3>
+    <h3 data-zh="管理者登入" data-ja="管理者ログイン"></h3>
     <input type="password" id="pwInput" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()">
-    <div class="pw-err hidden" id="pwErr" data-zh="å¯ç¢¼é¯èª¤" data-ja="ãã¹ã¯ã¼ããéãã¾ã"></div>
+    <div class="pw-err hidden" id="pwErr" data-zh="密碼錯誤" data-ja="パスワードが違います"></div>
     <div class="pw-btns">
-      <button class="pw-cancel" onclick="closePw()" data-zh="åæ¶" data-ja="ã­ã£ã³ã»ã«"></button>
-      <button class="pw-ok" onclick="checkPw()" data-zh="ç»å¥" data-ja="ã­ã°ã¤ã³"></button>
+      <button class="pw-cancel" onclick="closePw()" data-zh="取消" data-ja="キャンセル"></button>
+      <button class="pw-ok" onclick="checkPw()" data-zh="登入" data-ja="ログイン"></button>
     </div>
   </div>
 </div>
@@ -449,22 +449,22 @@ K¦ã*xøð½ÍÁ¸ø(ð½¥Øø(ñ¥
 <div id="adminOverlay" class="admin-overlay hidden">
   <div class="admin-panel">
     <div class="admin-hdr">
-      <h2 data-zh="â ç®¡çèä»é¢" data-ja="â ç®¡çèããã«"></h2>
-      <button class="admin-close" onclick="closeAdmin()">â</button>
+      <h2 data-zh="⚙ 管理者介面" data-ja="⚙ 管理者パネル"></h2>
+      <button class="admin-close" onclick="closeAdmin()">✕</button>
     </div>
     <div class="admin-body">
       <div class="admin-tabs">
-        <button class="admin-tab active" onclick="showAdTab(0,this)" data-zh="ææ®µç®¡ç" data-ja="æéå¸¯ç®¡ç"></button>
-        <button class="admin-tab" onclick="showAdTab(1,this)" data-zh="é ç´åè¡¨" data-ja="äºç´ä¸è¦§"></button>
-        <button class="admin-tab" onclick="showAdTab(2,this)" data-zh="è¨­å®" data-ja="è¨­å®"></button>
+        <button class="admin-tab active" onclick="showAdTab(0,this)" data-zh="時段管理" data-ja="時間帯管理"></button>
+        <button class="admin-tab" onclick="showAdTab(1,this)" data-zh="預約列表" data-ja="予約一覧"></button>
+        <button class="admin-tab" onclick="showAdTab(2,this)" data-zh="設定" data-ja="設定"></button>
       </div>
       <!-- Tab 0: Slots -->
       <div class="ad-tab" id="adTab0">
         <div id="slotList"></div>
         <div class="add-slot-row">
-          <div class="fg"><label data-zh="éå§" data-ja="éå§"></label><input type="time" id="newStart" value="09:00"></div>
-          <div class="fg"><label data-zh="çµæ" data-ja="çµäº"></label><input type="time" id="newEnd" value="09:50"></div>
-          <button class="btn-add" onclick="addSlot()" data-zh="ï¼ æ°å¢" data-ja="ï¼ è¿½å "></button>
+          <div class="fg"><label data-zh="開始" data-ja="開始"></label><input type="time" id="newStart" value="09:00"></div>
+          <div class="fg"><label data-zh="結束" data-ja="終了"></label><input type="time" id="newEnd" value="09:50"></div>
+          <button class="btn-add" onclick="addSlot()" data-zh="＋ 新增" data-ja="＋ 追加"></button>
         </div>
       </div>
       <!-- Tab 1: Bookings -->
@@ -472,34 +472,34 @@ K¦ã*xøð½ÍÁ¸ø(ð½¥Øø(ñ¥
       <!-- Tab 2: Settings -->
       <div class="ad-tab hidden" id="adTab2">
         <div class="setting-group">
-          <label data-zh="ç®¡çå¯ç¢¼" data-ja="ç®¡çãã¹ã¯ã¼ã"></label>
+          <label data-zh="管理密碼" data-ja="管理パスワード"></label>
           <input type="text" id="setPass" value="0857">
-          <div class="hint" data-zh="ç®¡çä»é¢çç»å¥å¯ç¢¼" data-ja="ç®¡çããã«ã®ã­ã°ã¤ã³ãã¹ã¯ã¼ã"></div>
+          <div class="hint" data-zh="管理介面的登入密碼" data-ja="管理パネルのログインパスワード"></div>
         </div>
         <div class="setting-group">
-          <label data-zh="éç¥ä¿¡ç®±" data-ja="éç¥ã¡ã¼ã«ã¢ãã¬ã¹"></label>
+          <label data-zh="通知信箱" data-ja="通知メールアドレス"></label>
           <input type="email" id="setEmail" value="yougiveloveabadname0857@gmail.com">
         </div>
         <div class="setting-group">
-          <label data-zh="èª²ç¨æé·ï¼åéï¼" data-ja="ææ¥­æéï¼åï¼"></label>
+          <label data-zh="課程時長（分鐘）" data-ja="授業時間（分）"></label>
           <input type="number" id="setDur" value="50" min="10" max="180">
         </div>
         <div class="setting-group">
-          <label data-zh="å¯é ç´å¤©æ¸" data-ja="äºç´å¯è½æ¥æ°"></label>
+          <label data-zh="可預約天數" data-ja="予約可能日数"></label>
           <input type="number" id="setMaxD" value="30" min="7" max="90">
         </div>
         <div class="setting-group">
-          <label data-zh="å¯é ç´çææ" data-ja="äºç´å¯è½ãªææ¥"></label>
+          <label data-zh="可預約的星期" data-ja="予約可能な曜日"></label>
           <div class="day-checks" id="dayChecks"></div>
         </div>
         <div class="setting-group">
           <label>Google Apps Script URL</label>
           <input type="url" id="setScript" placeholder="https://script.google.com/macros/s/.../exec">
-          <div class="hint" data-zh="é¨ç½² Apps Script å¾çç¶²åï¼ç¨æ¼èªåå¯¦å¥ Google è¡äºæï¼è©³è¦ google-apps-script.jsï¼" data-ja="Apps Script ããã­ã¤å¾ã®URLãGoogle Calendar ã«èªåæ¸ãè¾¼ã¿ã¾ãï¼google-apps-script.js åç§ï¼"></div>
+          <div class="hint" data-zh="部署 Apps Script 後的網址，用於自動實入 Google 行事曜（詳見 google-apps-script.js）" data-ja="Apps Script デプロイ後のURL。Google Calendar に自動書き込みます（google-apps-script.js 参照）"></div>
           <div id="scriptStatus" style="margin-top:.4rem;font-size:.82rem"></div>
-          <button onclick="testScript()" style="margin-top:.4rem;padding:.35rem .8rem;border:1.5px solid var(--pri-l);border-radius:5px;background:none;color:var(--pri-l);font-size:.8rem;font-weight:600;cursor:pointer" data-zh="æ¸¬è©¦é£ç·" data-ja="æ¥ç¶ãã¹ã"></button>
+          <button onclick="testScript()" style="margin-top:.4rem;padding:.35rem .8rem;border:1.5px solid var(--pri-l);border-radius:5px;background:none;color:var(--pri-l);font-size:.8rem;font-weight:600;cursor:pointer" data-zh="測試連線" data-ja="接続テスト"></button>
         </div>
-        <button class="btn-save" onclick="saveSettings()" data-zh="å²å­è¨­å®" data-ja="è¨­å®ãä¿å­"></button>
+        <button class="btn-save" onclick="saveSettings()" data-zh="儲存設定" data-ja="設定を保存"></button>
       </div>
     </div>
   </div>
@@ -509,32 +509,32 @@ K¦ã*xøð½ÍÁ¸ø(ð½¥Øø(ñ¥
 <div id="cancelPopup" class="cancel-overlay hidden">
   <div class="cancel-box">
     <div class="cancel-box-top">
-      <div class="cancel-icon">â </div>
-      <h3 id="cancelTitle" data-zh="ç¢ºå®è¦åæ¶æ­¤é ç´åï¼" data-ja="ãã®äºç´ãã­ã£ã³ã»ã«ãã¾ããï¼"></h3>
-      <p style="font-size:.85rem;color:var(--txt-l)" data-zh="æ­¤æä½ç¡æ³å¾©å" data-ja="ãã®æä½ã¯åã«æ»ãã¾ãã"></p>
+      <div class="cancel-icon">⚠</div>
+      <h3 id="cancelTitle" data-zh="確定要取消此預約嗎？" data-ja="この予約をキャンセルしますか？"></h3>
+      <p style="font-size:.85rem;color:var(--txt-l)" data-zh="此操作無法復原" data-ja="この操作は元に戻せません"></p>
     </div>
     <div class="cancel-box-body">
       <div class="cancel-det" id="cancelDet"></div>
       <div class="cancel-btns">
-        <button class="cancel-keep" onclick="closeCancelPopup()" data-zh="ä¿çé ç´" data-ja="äºç´ãä¿æ"></button>
-        <button class="cancel-confirm" id="cancelConfirmBtn" onclick="doCancel()" data-zh="ç¢ºèªåæ¶" data-ja="ã­ã£ã³ã»ã«ç¢ºå®"></button>
+        <button class="cancel-keep" onclick="closeCancelPopup()" data-zh="保留預約" data-ja="予約を保持"></button>
+        <button class="cancel-confirm" id="cancelConfirmBtn" onclick="doCancel()" data-zh="確認取消" data-ja="キャンセル確定"></button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="footer">Â© 2026 Kou <span data-zh="ç·ä¸å®¶æé ç´ç³»çµ±" data-ja="ãªã³ã©ã¤ã³åå¥æå°äºç´ã·ã¹ãã "></span></div>
+<div class="footer">© 2026 Kou <span data-zh="線上家教預約系統" data-ja="オンライン個別指導予約システム"></span></div>
 
 <script>
 // ================ I18N ================
 const I18N={
-  zh:{dayNames:['æ¥','ä¸','äº','ä¸','å','äº','å­'],dayFull:['æææ¥','ææä¸','ææäº','ææä¸','ææå','ææäº','ææå­'],months:['1æ','2æ','3æ','4æ','5æ','6æ','7æ','8æ','9æ','10æ','11æ','12æ'],today:'ä»å¤©',noSlot:'ç¡ææ®µ',pickDate:'è«åé¸æä¸åæ¥æ',noAvail:'æ­¤æ¥ææ²æå¯ç¨ææ®µ',am:'ä¸å',pm:'ä¸å'},
-  ja:{dayNames:['æ¥','æ','ç«','æ°´','æ¨','é','å'],dayFull:['æ¥ææ¥','æææ¥','ç«ææ¥','æ°´ææ¥','æ¨ææ¥','éææ¥','åææ¥'],months:['1æ','2æ','3æ','4æ','5æ','6æ','7æ','8æ','9æ','10æ','11æ','12æ'],today:'ä»æ¥',noSlot:'è©²å½ãªã',pickDate:'æ¥ä»ãé¸æãã¦ãã ãã',noAvail:'ãã®æ¥ã¯ç©ºããããã¾ãã',am:'åå',pm:'åå¾'}
+  zh:{dayNames:['日','一','二','三','四','五','六'],dayFull:['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],today:'今天',noSlot:'無時段',pickDate:'請先選擇一個日期',noAvail:'此日期沒有可用時段',am:'上午',pm:'下午'},
+  ja:{dayNames:['日','月','火','水','木','金','土'],dayFull:['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'],months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],today:'今日',noSlot:'該当なし',pickDate:'日付を選択してください',noAvail:'この日は空きがありません',am:'午前',pm:'午後'}
 };
 let LANG='zh';
 function setLang(l){
   LANG=l;
-  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes(l==='zh'?'ä¸­':'æ¥')));
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes(l==='zh'?'中':'日')));
   document.querySelectorAll('[data-zh]').forEach(el=>{el.textContent=el.getAttribute('data-'+l)});
   document.querySelectorAll('[data-ph-zh]').forEach(el=>{el.placeholder=el.getAttribute('data-ph-'+l)});
   document.querySelectorAll('select option[data-zh]').forEach(el=>{el.textContent=el.getAttribute('data-'+l)});
@@ -586,24 +586,24 @@ function updateLoginUI(){
   const tog=document.getElementById('toggleMode');
   const passInput=document.getElementById('loginPass');
   if(isReg){
-    sub.setAttribute('data-zh','é¦æ¬¡ä½¿ç¨è«è¨»åå¸³è');
-    sub.setAttribute('data-ja','åãã¦ã®æ¹ã¯ã¢ã«ã¦ã³ãç»é²ãã¦ãã ãã');
-    btn.setAttribute('data-zh','è¨»å');
-    btn.setAttribute('data-ja','ç»é²');
-    tog.setAttribute('data-zh','å·²æå¸³èï¼ç»å¥');
-    tog.setAttribute('data-ja','ã¢ã«ã¦ã³ãããæã¡ã®æ¹ã¯ã­ã°ã¤ã³');
-    passInput.setAttribute('data-ph-zh','è«è¨­å®å¯ç¢¼ï¼è³å°4ä½ï¼');
-    passInput.setAttribute('data-ph-ja','ãã¹ã¯ã¼ããè¨­å®ï¼4æå­ä»¥ä¸ï¼');
+    sub.setAttribute('data-zh','首次使用請註冊帳號');
+    sub.setAttribute('data-ja','初めての方はアカウント登録してください');
+    btn.setAttribute('data-zh','註冊');
+    btn.setAttribute('data-ja','登録');
+    tog.setAttribute('data-zh','已有帳號？登入');
+    tog.setAttribute('data-ja','アカウントをお持ちの方はログイン');
+    passInput.setAttribute('data-ph-zh','請設定密碼（至少4位）');
+    passInput.setAttribute('data-ph-ja','パスワードを設定（4文字以上）');
     passInput.autocomplete='new-password';
   }else{
-    sub.setAttribute('data-zh','è«ç»å¥æ¨çå¸³è');
-    sub.setAttribute('data-ja','ã¢ã«ã¦ã³ãã«ã­ã°ã¤ã³ãã¦ãã ãã');
-    btn.setAttribute('data-zh','ç»å¥');
-    btn.setAttribute('data-ja','ã­ã°ã¤ã³');
-    tog.setAttribute('data-zh','æ²æå¸³èï¼è¨»å');
-    tog.setAttribute('data-ja','ã¢ã«ã¦ã³ãããæã¡ã§ãªãæ¹ã¯ç»é²');
-    passInput.setAttribute('data-ph-zh','è«è¼¸å¥å¯ç¢¼');
-    passInput.setAttribute('data-ph-ja','ãã¹ã¯ã¼ããå¥å');
+    sub.setAttribute('data-zh','請登入您的帳號');
+    sub.setAttribute('data-ja','アカウントにログインしてください');
+    btn.setAttribute('data-zh','登入');
+    btn.setAttribute('data-ja','ログイン');
+    tog.setAttribute('data-zh','沒有帳號？註冊');
+    tog.setAttribute('data-ja','アカウントをお持ちでない方は登録');
+    passInput.setAttribute('data-ph-zh','請輸入密碼');
+    passInput.setAttribute('data-ph-ja','パスワードを入力');
     passInput.autocomplete='current-password';
   }
   setLang(LANG);
@@ -634,18 +634,18 @@ function doLogin(e){
   if(loginMode==='register'){
     const name=document.getElementById('loginName').value.trim();
     const passConfirm=document.getElementById('loginPassConfirm').value;
-    if(!name){showLoginError('è«è¼¸å¥å§å','æ°åãå¥åãã¦ãã ãã');return}
-    if(pass.length<4){showLoginError('å¯ç¢¼è³å°éè¦4ä½','ãã¹ã¯ã¼ãã¯4æå­ä»¥ä¸å¿è¦ã§ã');return}
-    if(pass!==passConfirm){showLoginError('å©æ¬¡å¯ç¢¼ä¸ä¸è´','ãã¹ã¯ã¼ããä¸è´ãã¾ãã');return}
-    if(stored){showLoginError('æ­¤ä¿¡ç®±å·²è¨»åï¼è«ç´æ¥ç»å¥','ãã®ã¡ã¼ã«ã¢ãã¬ã¹ã¯ç»é²æ¸ã¿ã§ããã­ã°ã¤ã³ãã¦ãã ãã');loginMode='login';updateLoginUI();return}
+    if(!name){showLoginError('請輸入姓名','氏名を入力してください');return}
+    if(pass.length<4){showLoginError('密碼至少需要4位','パスワードは4文字以上必要です');return}
+    if(pass!==passConfirm){showLoginError('兩次密碼不一致','パスワードが一致しません');return}
+    if(stored){showLoginError('此信箱已註冊，請直接登入','このメールアドレスは登録済みです。ログインしてください');loginMode='login';updateLoginUI();return}
     try{localStorage.setItem(pwdKey,JSON.stringify({name,pass}))}catch(e){}
     currentUser={name,email};
     try{localStorage.setItem('kou_user',JSON.stringify(currentUser))}catch(e){}
     enterCalendar();
   }else{
-    if(!stored){showLoginError('æ­¤ä¿¡ç®±å°æªè¨»åï¼è«åè¨»å','ãã®ã¡ã¼ã«ã¢ãã¬ã¹ã¯æªç»é²ã§ããåã«ç»é²ãã¦ãã ãã');loginMode='register';updateLoginUI();return}
+    if(!stored){showLoginError('此信箱尚未註冊，請先註冊','このメールアドレスは未登録です。先に登録してください');loginMode='register';updateLoginUI();return}
     const data=JSON.parse(stored);
-    if(data.pass!==pass){showLoginError('å¯ç¢¼é¯èª¤','ãã¹ã¯ã¼ããééã£ã¦ãã¾ã');return}
+    if(data.pass!==pass){showLoginError('密碼錯誤','パスワードが間違っています');return}
     currentUser={name:data.name,email};
     try{localStorage.setItem('kou_user',JSON.stringify(currentUser))}catch(e){}
     enterCalendar();
@@ -707,21 +707,21 @@ function saveTeacherMemo(date,start,text){
   });
 }
 function _buildMemoEntries(bookings,idSuffix){
-  const days=LANG==='zh'?['æ¥','ä¸','äº','ä¸','å','äº','å­']:['æ¥','æ','ç«','æ°´','æ¨','é','å'];
+  const days=LANG==='zh'?['日','一','二','三','四','五','六']:['日','月','火','水','木','金','土'];
   return bookings.map(b=>{
     const dt=new Date(b.date+'T00:00:00');
     const wd=days[dt.getDay()];
     const [y,m,d]=b.date.split('-');
-    const dateLabel=`${y}å¹´${parseInt(m)}æ${parseInt(d)}æ¥ï¼${wd}ï¼`;
+    const dateLabel=`${y}年${parseInt(m)}月${parseInt(d)}日（${wd}）`;
     const savedMemo=localStorage.getItem(getMemoKey(b.date,b.start))||'';
     const teacherMemo=localStorage.getItem(getTeacherMemoKey(b.date,b.start))||'';
     const hintId=`memoHint${idSuffix}_${b.date}_${b.start.replace(':','')}`;
     const tHintId=`tHint${idSuffix}_${b.date}_${b.start.replace(':','')}`;
-    const phStu=LANG==='zh'?'è¨éä»æ¥é²åº¦ãä½æ¥­ãç­è¨â¦':'ä»æ¥ã®é²æã»å®¿é¡ã»ã¡ã¢ãè¨å¥â¦';
-    const phTea=LANG==='zh'?'æå¸«åæ³¨ï¼èª²ç¨éé»ãä½æ¥­ãè©äªâ¦':'ææ¥­ã¡ã¢ï¼èª²é¡ã»è©ä¾¡ãªã©â¦';
-    const labelStu=LANG==='zh'?'ð å­¸çåæ³¨':'ð çå¾ã¡ã¢';
-    const labelTea=LANG==='zh'?'âï¸ æå¸«åæ³¨':'âï¸ åçã¡ã¢';
-    const savedTxt=LANG==='zh'?'å·²å²å­ â':'ä¿å­æ¸ã¿ â';
+    const phStu=LANG==='zh'?'記錄今日進度、作業、筆記…':'今日の進捗・宿題・メモを記入…';
+    const phTea=LANG==='zh'?'教師備注：課程重點、作業、評䪞…':'授業メモ：課題・評価など…';
+    const labelStu=LANG==='zh'?'📝 學生備注':'📝 生徒メモ';
+    const labelTea=LANG==='zh'?'✏️ 教師備注':'✏️ 先生メモ';
+    const savedTxt=LANG==='zh'?'已儲存 ✓':'保存済み ✓';
     // Teacher note display: editable if admin, read-only for student
     const teacherSection=isAdmin
       ?`<div class="memo-teacher-area">
@@ -732,20 +732,20 @@ function _buildMemoEntries(bookings,idSuffix){
         </div>`
       :(teacherMemo
           ?`<div class="teacher-note-box">${teacherMemo.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>`
-          :`<div class="teacher-note-empty">${LANG==='zh'?'ï¼æå¸«å°æªå¡«å¯«ï¼':'ï¼åçæªè¨å¥ï¼'}</div>`);
+          :`<div class="teacher-note-empty">${LANG==='zh'?'（教師尚未填寫）':'（先生未記入）'}</div>`);
     // Cancel button: only show if lesson is more than 24h away
     const lessonTime=new Date(`${b.date}T${b.start}:00`);
     const hoursLeft=(lessonTime-new Date())/(1000*60*60);
     let cancelHTML='';
     if(hoursLeft>24){
-      const cLabel=LANG==='zh'?'åæ¶é ç´':'äºç´ã­ã£ã³ã»ã«';
+      const cLabel=LANG==='zh'?'取消預約':'予約キャンセル';
       cancelHTML=`<button class="cancel-btn" onclick="openCancelPopup('${b.date}','${b.start}','${b.end}','${(b.name||'').replace(/'/g,"\\'")}','${(b.email||'').replace(/'/g,"\\'")}')">${cLabel}</button>`;
     }else if(hoursLeft>0){
-      cancelHTML=`<div class="cancel-expired">${LANG==='zh'?'ï¼å·²éåæ¶æéï¼èª²å24å°æï¼':'ï¼ã­ã£ã³ã»ã«æéåãï¼ææ¥­24æéåã¾ã§ï¼'}</div>`;
+      cancelHTML=`<div class="cancel-expired">${LANG==='zh'?'（已過取消期限：課前24小時）':'（キャンセル期限切れ：授業24時間前まで）'}</div>`;
     }
     return`<div class="memo-entry">
       <div class="memo-entry-date">${dateLabel}</div>
-      <div class="memo-entry-time">â° ${b.start} - ${b.end}</div>
+      <div class="memo-entry-time">⏰ ${b.start} - ${b.end}</div>
       <div class="memo-section-label">${labelStu}</div>
       <textarea class="memo-textarea" placeholder="${phStu}"
         oninput="saveMemo('${b.date}','${b.start}',this.value)"
@@ -775,8 +775,8 @@ function renderMemoPanel(){
 
   const emptyHTML=`<div class="memo-empty">${
     LANG==='zh'
-      ?'å°ç¡é ç´ã<br>é ç´å¾ï¼æ¯å èª²çåå¿æ¬ä½å°æé¡¯ç¤ºå¨éè£¡ã'
-      :'ã¾ã äºç´ãããã¾ããã<br>äºç´ããã¨ããã«ã¬ãã¹ã³ãã¨ã®ã¡ã¢ãè¡¨ç¤ºããã¾ãã'
+      ?'尚無預約。<br>預約後，每堂課的備忘欄位將會顯示在這裡。'
+      :'まだ予約がありません。<br>予約するとここにレッスンごとのメモが表示されます。'
   }</div>`;
   if(list)  list.innerHTML =userBk.length?_buildMemoEntries(userBk,'') :emptyHTML;
   if(list2) list2.innerHTML=userBk.length?_buildMemoEntries(userBk,'2'):emptyHTML;
@@ -786,14 +786,14 @@ function renderMemoPanel(){
 let pendingCancel=null;
 function openCancelPopup(date,start,end,name,email){
   pendingCancel={date,start,end,name,email};
-  const days=LANG==='zh'?['æ¥','ä¸','äº','ä¸','å','äº','å­']:['æ¥','æ','ç«','æ°´','æ¨','é','å'];
+  const days=LANG==='zh'?['日','一','二','三','四','五','六']:['日','月','火','水','木','金','土'];
   const dt=new Date(date+'T00:00:00');
   const wd=days[dt.getDay()];
   const [y,m,d]=date.split('-');
-  const dateLabel=`${y}å¹´${parseInt(m)}æ${parseInt(d)}æ¥ï¼${wd}ï¼`;
+  const dateLabel=`${y}年${parseInt(m)}月${parseInt(d)}日（${wd}）`;
   const lbls=LANG==='zh'
-    ?{date:'æ¥æ',time:'æé',name:'å§å'}
-    :{date:'æ¥ä»',time:'æé',name:'æ°å'};
+    ?{date:'日期',time:'時間',name:'姓名'}
+    :{date:'日付',time:'時間',name:'氏名'};
   document.getElementById('cancelDet').innerHTML=`
     <div class="r"><span class="l">${lbls.name}</span><span class="v">${name}</span></div>
     <div class="r"><span class="l">${lbls.date}</span><span class="v">${dateLabel}</span></div>
@@ -806,7 +806,7 @@ function doCancel(){
   const btn=document.getElementById('cancelConfirmBtn');
   const origTxt=btn.textContent;
   btn.disabled=true;
-  btn.textContent=LANG==='zh'?'åæ¶ä¸­...':'ã­ã£ã³ã»ã«ä¸­...';
+  btn.textContent=LANG==='zh'?'取消中...':'キャンセル中...';
   const c=pendingCancel;
 
   const onDone=(ok)=>{
@@ -861,11 +861,11 @@ function renderMiniCal(){
   const daysInMonth=new Date(mcYear,mcMonth+1,0).getDate();
   const moName=L.months[mcMonth];
   let html=`<div class="mini-cal"><div class="mini-cal-nav">`;
-  html+=`<button onclick="chgMiniCal(-1)">â¹</button>`;
-  html+=`<span>${mcYear}å¹´ ${moName}</span>`;
-  html+=`<button onclick="chgMiniCal(1)">âº</button></div>`;
+  html+=`<button onclick="chgMiniCal(-1)">‹</button>`;
+  html+=`<span>${mcYear}年 ${moName}</span>`;
+  html+=`<button onclick="chgMiniCal(1)">›</button></div>`;
   html+=`<table><thead><tr>`;
-  const dayH=LANG==='zh'?['ä¸','äº','ä¸','å','äº','å­','æ¥']:['æ','ç«','æ°´','æ¨','é','å','æ¥'];
+  const dayH=LANG==='zh'?['一','二','三','四','五','六','日']:['月','火','水','木','金','土','日'];
   dayH.forEach(d=>{html+=`<th>${d}</th>`});
   html+=`</tr></thead><tbody><tr>`;
   for(let i=0;i<startDow;i++)html+=`<td></td>`;
@@ -936,7 +936,7 @@ function renderWeek(){
   const wEnd=new Date(weekStart);wEnd.setDate(wEnd.getDate()+6);
   const ml=document.getElementById('moLabel');
   ml.textContent=weekStart.getMonth()===wEnd.getMonth()
-    ?`${weekStart.getFullYear()}å¹´ ${L.months[weekStart.getMonth()]}`
+    ?`${weekStart.getFullYear()}年 ${L.months[weekStart.getMonth()]}`
     :`${L.months[weekStart.getMonth()]} - ${L.months[wEnd.getMonth()]}`;
   for(let i=0;i<7;i++){const h=document.createElement('div');h.className='day-hdr';h.textContent=`(${L.dayNames[(i+1)%7]})`;grid.appendChild(h)}
   for(let i=0;i<7;i++){
@@ -946,7 +946,7 @@ function renderWeek(){
     if(isT)cell.classList.add('today');
     if(!past&&!far&&av){cell.classList.add('avail');cell.onclick=()=>pickDate(new Date(d))}else{cell.classList.add('unav')}
     if(isS)cell.classList.add('sel');
-    const num=document.createElement('span');num.className='dn';num.textContent=`${d.getDate()}æ¥`;cell.appendChild(num);
+    const num=document.createElement('span');num.className='dn';num.textContent=`${d.getDate()}日`;cell.appendChild(num);
     const lb=document.createElement('span');lb.className='dl';
     if(isT)lb.textContent=L.today;else if(!av||past||far)lb.textContent=L.noSlot;
     cell.appendChild(lb);grid.appendChild(cell);
@@ -1002,7 +1002,7 @@ function _drawSlots(busySlots){
 
   // Loading indicator while awaiting calendar check
   if(busySlots===null&&CFG.scriptUrl){
-    area.innerHTML+=`<div class="slot-check-msg">â³ ${LANG==='zh'?'æ­£å¨ç¢ºèªè¡äºæç©ºä½â¦':'ã«ã¬ã³ãã¼ç¢ºèªä¸­â¦'}</div>`;
+    area.innerHTML+=`<div class="slot-check-msg">⏳ ${LANG==='zh'?'正在確認行事曆空位…':'カレンダー確認中…'}</div>`;
   }
 
   const row=document.createElement('div');row.className='ts-row';row.style.flexWrap='wrap';
@@ -1019,12 +1019,12 @@ function _drawSlots(busySlots){
     const btn=document.createElement('div');
     if(isPast){
       btn.className='ts ts-past';
-      btn.title=LANG==='zh'?'æ­¤ææ®µå·²é':'ãã®æéã¯éãã¦ãã¾ã';
-      btn.innerHTML=`${sl.s}<br><span style="font-size:.72rem">${LANG==='zh'?'å·²é':'çµäº'}</span>`;
+      btn.title=LANG==='zh'?'此時段已過':'この時間は過ぎています';
+      btn.innerHTML=`${sl.s}<br><span style="font-size:.72rem">${LANG==='zh'?'已過':'終了'}</span>`;
     }else if(isLocalBooked||isCalBusy){
       btn.className='ts ts-full';
-      btn.title=LANG==='zh'?'æ­¤ææ®µå·²æ»¿ï¼è«é¸æå¶ä»ææ®µ':'ãã®æéã¯æºå¸­ã§ã';
-      btn.innerHTML=`${sl.s}<br><span style="font-size:.72rem">${LANG==='zh'?'å·²æ»¿':'æºå¸­'}</span>`;
+      btn.title=LANG==='zh'?'此時段已滿，請選擇其他時段':'この時間は満席です';
+      btn.innerHTML=`${sl.s}<br><span style="font-size:.72rem">${LANG==='zh'?'已滿':'満席'}</span>`;
     }else if(isLoading){
       btn.className='ts ts-loading';
       const[sh,sm]=sl.s.split(':');btn.textContent=fmtTime(sh,sm);
@@ -1055,12 +1055,12 @@ function pickSlot(sl,el){
   const L=I18N[LANG];
   document.getElementById('cfDay').textContent=selDate.getDate();
   document.getElementById('cfWd').textContent=L.dayFull[selDate.getDay()];
-  document.getElementById('cfMo').textContent=`${selDate.getFullYear()}å¹´ ${L.months[selDate.getMonth()]}`;
+  document.getElementById('cfMo').textContent=`${selDate.getFullYear()}年 ${L.months[selDate.getMonth()]}`;
   const[sh,sm]=sl.s.split(':'),[eh,em]=sl.e.split(':');
   document.getElementById('cfTime').textContent=`${fmtTime(sh,sm)} - ${fmtTime(eh,em)}`;
   const whoTxt=LANG==='zh'
-    ?`ä»¥ <strong>${currentUser.name}</strong> çèº«ä»½é ç´`
-    :`<strong>${currentUser.name}</strong> ã¨ãã¦äºç´ãã¾ã`;
+    ?`以 <strong>${currentUser.name}</strong> 的身份預約`
+    :`<strong>${currentUser.name}</strong> として予約します`;
   document.getElementById('cfWho').innerHTML=whoTxt;
   show('confirmPopup');
 }
@@ -1071,7 +1071,7 @@ function doBook(){
   const cfBtn=document.querySelector('.btn-confirm');
   const origTxt=cfBtn.textContent;
   cfBtn.disabled=true;
-  cfBtn.textContent=LANG==='zh'?'é ç´ä¸­...':'äºç´ä¸­...';
+  cfBtn.textContent=LANG==='zh'?'預約中...':'予約中...';
 
   const L=I18N[LANG];
   const data={
@@ -1081,7 +1081,7 @@ function doBook(){
     time:document.getElementById('cfTime').textContent,slot:selSlot
   };
 
-  // 1) å¼å« Google Apps Script â èªåå¯«å¥è¡äºæ
+  // 1) 呼叫 Google Apps Script → 自動寫入行事曆
   const apiPayload={
     studentName:data.name,
     studentEmail:data.email,
@@ -1091,7 +1091,7 @@ function doBook(){
   };
 
   const onDone=(gcalOk)=>{
-    // 2) å²å­æ¬å°ç´é
+    // 2) 儲存本地紀錄
     const newBk={...data,start:selSlot.s,end:selSlot.e,ts:new Date().toISOString(),gcal:gcalOk};
     // Save to per-user key (reliable, no email-match issues)
     saveUserBooking(newBk);
@@ -1100,13 +1100,13 @@ function doBook(){
     CFG.booked.push(`${data.date}_${selSlot.s}`);
     saveCfg();
 
-    // 3) æåç«é¢
+    // 3) 成功畫面
     const lbls=LANG==='zh'
-      ?{name:'å§å',email:'ä¿¡ç®±',date:'æ¥æ',time:'æé',cal:'è¡äºæ'}
-      :{name:'æ°å',email:'ã¡ã¼ã«',date:'æ¥ä»',time:'æé',cal:'ã«ã¬ã³ãã¼'};
+      ?{name:'姓名',email:'信箱',date:'日期',time:'時間',cal:'行事曆'}
+      :{name:'氏名',email:'メール',date:'日付',time:'時間',cal:'カレンダー'};
     const calStatus=gcalOk
-      ?(LANG==='zh'?'â å·²å¯«å¥ Google è¡äºæ':'â Google Calendar ã«ç»é²æ¸ã¿')
-      :(LANG==='zh'?'â ï¸ æªé£æ¥ï¼åè¨éå¨æ¬å°ï¼':'â ï¸ æªæ¥ç¶ï¼ã­ã¼ã«ã«è¨é²ã®ã¿ï¼');
+      ?(LANG==='zh'?'✅ 已寫入 Google 行事曆':'✅ Google Calendar に登録済み')
+      :(LANG==='zh'?'⚠️ 未連接（僅記錄在本地）':'⚠️ 未接続（ローカル記録のみ）');
     document.getElementById('sucDet').innerHTML=`
       <div class="r"><span class="l">${lbls.name}</span><span class="v">${data.name}</span></div>
       <div class="r"><span class="l">${lbls.email}</span><span class="v">${data.email}</span></div>
@@ -1127,8 +1127,8 @@ function doBook(){
       body:JSON.stringify(apiPayload),
       mode:'no-cors'
     }).then(()=>{
-      // no-cors æ¨¡å¼ç¡æ³è®ååæï¼ä½è«æ±å·²éåº
-      // åè©¥ç¨ GET redirect æ¹å¼ç¢ºèª
+      // no-cors 模式無法讀取回應，但請求已送出
+      // 嘗詥用 GET redirect 方式確認
       return fetch(CFG.scriptUrl+'?check=1',{mode:'cors',redirect:'follow'}).then(r=>r.json()).catch(()=>null);
     }).then(res=>{
       onDone(true);
@@ -1137,11 +1137,11 @@ function doBook(){
       onDone(false);
     });
 
-    // image beacon åä»½å·²ç§»é¤ï¼é¿åéè¤å»ºç«æ¥æäºä»¶
+    // image beacon 備份已移除，避免重複建立日曆事件
   } else {
-    // æ²æè¨­å® Apps Scriptï¼ä½¿ç¨ mailto åæ¡
+    // 沒有設定 Apps Script，使用 mailto 備案
     const body=encodeURIComponent(`Student: ${data.name}\nEmail: ${data.email}\nDate: ${data.dateDisp}\nTime: ${data.time}`);
-    const subj=encodeURIComponent(`ãBookingã${data.name} - ${data.dateDisp} ${data.time}`);
+    const subj=encodeURIComponent(`【Booking】${data.name} - ${data.dateDisp} ${data.time}`);
     const a=document.createElement('a');a.href=`mailto:${CFG.email}?subject=${subj}&body=${body}`;a.click();
     onDone(false);
   }
@@ -1164,17 +1164,17 @@ function showAdTab(i,btn){document.querySelectorAll('.ad-tab').forEach((t,j)=>t.
 let adSlotMode='weekday'; // 'weekday' or 'weekend'
 function renderAdSlots(){
   const list=document.getElementById('slotList');list.innerHTML='';
-  const wdLabel=LANG==='zh'?'å¹³æ¥ (é±ä¸~é±äº) 18:00-21:00':'å¹³æ¥ (æãé) 18:00-21:00';
-  const weLabel=LANG==='zh'?'é±æ« (é±å­ãæ¥) 10:00-17:00':'é±æ« (åã»æ¥) 10:00-17:00';
+  const wdLabel=LANG==='zh'?'平日 (週一~週五) 18:00-21:00':'平日 (月〜金) 18:00-21:00';
+  const weLabel=LANG==='zh'?'週末 (週六、日) 10:00-17:00':'週末 (土・日) 10:00-17:00';
   list.innerHTML=`<div style="display:flex;gap:.5rem;margin-bottom:1rem">
     <button class="admin-tab ${adSlotMode==='weekday'?'active':''}" onclick="adSlotMode='weekday';renderAdSlots()" style="border-bottom:3px solid ${adSlotMode==='weekday'?'var(--acc)':'transparent'}">${wdLabel}</button>
     <button class="admin-tab ${adSlotMode==='weekend'?'active':''}" onclick="adSlotMode='weekend';renderAdSlots()" style="border-bottom:3px solid ${adSlotMode==='weekend'?'var(--acc)':'transparent'}">${weLabel}</button>
   </div>`;
   const slots=adSlotMode==='weekday'?(CFG.weekdaySlots||[]):(CFG.weekendSlots||[]);
-  if(!slots.length){list.innerHTML+='<div style="text-align:center;color:var(--txt-l);padding:1rem">â</div>';return}
+  if(!slots.length){list.innerHTML+='<div style="text-align:center;color:var(--txt-l);padding:1rem">—</div>';return}
   slots.forEach((sl,i)=>{
     const row=document.createElement('div');row.className='slot-row';
-    row.innerHTML=`<span class="slot-time">${sl.s} - ${sl.e}</span><span class="slot-day">${CFG.duration} min</span><button class="slot-del" onclick="delSlot('${adSlotMode}',${i})">â</button>`;
+    row.innerHTML=`<span class="slot-time">${sl.s} - ${sl.e}</span><span class="slot-day">${CFG.duration} min</span><button class="slot-del" onclick="delSlot('${adSlotMode}',${i})">✕</button>`;
     list.appendChild(row);
   });
 }
@@ -1189,12 +1189,12 @@ function delSlot(mode,i){const key=mode==='weekday'?'weekdaySlots':'weekendSlots
 function renderAdBookings(){
   const list=document.getElementById('bkList');list.innerHTML='';
   const bks=[...CFG.bookings].reverse();
-  if(!bks.length){list.innerHTML=`<div class="bk-empty">${LANG==='zh'?'å°ç¡é ç´ç´é':'äºç´è¨é²ã¯ããã¾ãã'}</div>`;return}
+  if(!bks.length){list.innerHTML=`<div class="bk-empty">${LANG==='zh'?'尚無預約紀錄':'予約記録はありません'}</div>`;return}
   bks.forEach(b=>{
     const tKey=getTeacherMemoKey(b.date,b.start);
     const tMemo=localStorage.getItem(tKey)||'';
-    const phTea=LANG==='zh'?'æç¹«åæ³¨ï¼èª²ç¨éé»ãä½æ¥­ãè©èªâ¦':'ææ¥­ã¡ã¢ï¼èª²é¡ã»è©ä¾¡ãªã©â¦';
-    const tLabel=LANG==='zh'?'âï¸ æå¸«åæ³¨':'âï¸ åçã¡ã¢';
+    const phTea=LANG==='zh'?'教繫備注：課程重點、作業、評語…':'授業メモ：課題・評価など…';
+    const tLabel=LANG==='zh'?'✏️ 教師備注':'✏️ 先生メモ';
     const item=document.createElement('div');item.className='bk-item';
     item.innerHTML=`
       <div class="bk-top"><span class="bk-name">${b.name}</span><span class="bk-time">${b.dateDisp} ${b.time}</span></div>
@@ -1207,7 +1207,7 @@ function renderAdBookings(){
   });
 }
 
-const DL_ZH=['æ¥','ä¸','äº','ä¸','å','äº','å­'],DL_JA=['æ¥','æ','ç«','æ°´','æ¨','é','å'];
+const DL_ZH=['日','一','二','三','四','五','六'],DL_JA=['日','月','火','水','木','金','土'];
 function renderAdSettings(){
   document.getElementById('setPass').value=CFG.password;
   document.getElementById('setEmail').value=CFG.email;
@@ -1227,7 +1227,7 @@ function saveSettings(){
   CFG.availDays=[...document.querySelectorAll('#dayChecks input:checked')].map(c=>parseInt(c.value));
   saveCfg();
   const btn=document.querySelector('.btn-save');const orig=btn.textContent;
-  btn.textContent='â Saved!';btn.style.background='#c6f6d5';
+  btn.textContent='✓ Saved!';btn.style.background='#c6f6d5';
   setTimeout(()=>{btn.textContent=orig;btn.style.background=''},1500);
   renderWeek();
 }
@@ -1236,15 +1236,15 @@ function saveSettings(){
 function testScript(){
   const url=document.getElementById('setScript').value.trim();
   const st=document.getElementById('scriptStatus');
-  if(!url){st.innerHTML='<span style="color:var(--red)">â  '+(LANG==='zh'?'è«åå¡«å¥ç¶²å':'URLãå¥åãã¦ãã ãã')+'</span>';return}
-  st.innerHTML='<span style="color:var(--pri-l)">'+(LANG==='zh'?'æ¸¬è©¦ä¸­...':'ãã¹ãä¸­...')+'</span>';
+  if(!url){st.innerHTML='<span style="color:var(--red)">⚠ '+(LANG==='zh'?'請先填入網址':'URLを入力してください')+'</span>';return}
+  st.innerHTML='<span style="color:var(--pri-l)">'+(LANG==='zh'?'測試中...':'テスト中...')+'</span>';
   fetch(url,{redirect:'follow'})
     .then(r=>r.json())
     .then(d=>{
-      if(d.status==='ok')st.innerHTML='<span style="color:var(--green)">â '+(LANG==='zh'?'é£ç·æåï¼':'æ¥ç¶æåï¼')+'</span>';
-      else st.innerHTML='<span style="color:var(--red)">â '+(LANG==='zh'?'é£ç·å¤±æ':'æ¥ç¶å¤±æ')+'</span>';
+      if(d.status==='ok')st.innerHTML='<span style="color:var(--green)">✅ '+(LANG==='zh'?'連線成功！':'接続成功！')+'</span>';
+      else st.innerHTML='<span style="color:var(--red)">❌ '+(LANG==='zh'?'連線失敗':'接続失敗')+'</span>';
     })
-    .catch(e=>{st.innerHTML='<span style="color:var(--red)">â '+(LANG==='zh'?'ç¡æ³é£ç·ï¼è«ç¢ºèªç¶²å':'æ¥ç¶ã§ãã¾ãããURLãç¢ºèªãã¦ãã ãã')+'</span>'});
+    .catch(e=>{st.innerHTML='<span style="color:var(--red)">❌ '+(LANG==='zh'?'無法連線，請確認網址':'接続できません。URLを確認してください')+'</span>'});
 }
 
 // ================ INIT ================
