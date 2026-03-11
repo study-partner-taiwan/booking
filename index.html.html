@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kou - 線上預約 / オンライン予約</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --pri:#1a3c5e;--pri-l:#2b5f8e;--acc:#f5b731;--acc-h:#e5a820;
+      --bg:#f0f4f8;--card:#fff;--txt:#1a3c5e;--txt-l:#6b7c93;
+      --bdr:#e2e8f0;--slot-bg:#edf2f7;--slot-bdr:#cbd5e0;
+      --red:#e53e3e;--green:#38a169;--radius:12px;
+      --shadow:0 2px 8px rgba(0,0,0,.08);--shadow-lg:0 8px 30px rgba(0,0,0,.12);
+    }
+    body{font-family:'Noto Sans TC','Noto Sans JP','Segoe UI',sans-serif;background:var(--bg);color:var(--txt);line-height:1.6;min-height:100vh}
+    .hidden{display:none!important}
+    button{font-family:inherit;cursor:pointer}
+    a{color:var(--pri-l)}
+
+    /* ===== LANG BAR ===== */
+    .lang-bar{position:fixed;top:0;right:0;z-index:999;display:flex;gap:2px;padding:8px 12px;background:rgba(255,255,255,.92);border-radius:0 0 0 10px;box-shadow:var(--shadow)}
+    .lang-btn{padding:4px 12px;border:1.5px solid var(--bdr);border-radius:5px;font-size:.8rem;font-weight:600;background:transparent;color:var(--txt-l);transition:.2s}
+    .lang-btn.active{background:var(--pri);color:#fff;border-color:var(--pri)}
+    .lang-btn:hover{border-color:var(--pri)}
+
+    /* ===== ADMIN FAB ===== */
+    .admin-fab{position:fixed;bottom:16px;right:16px;z-index:999;width:48px;height:48px;border-radius:50%;background:var(--pri);color:#fff;border:none;font-size:1.3rem;box-shadow:var(--shadow-lg);transition:.2s}
+    .admin-fab:hover{transform:scale(1.08)}
+
+    /* ===== HEADER ===== */
+    .hdr{background:linear-gradient(135deg,#dce6f0,#e8eff8);padding:2.5rem 1rem 2rem;text-align:center}
+    .hdr-sm{padding:1.8rem 1rem 1.2rem}
+    .avatar{width:72px;height:72px;border-radius:50%;background:var(--pri);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;margin-bottom:.6rem}
+    .avatar-sm{width:52px;height:52px;font-size:1.3rem;margin-bottom:.4rem}
+    .hdr h1{font-size:1.6rem;font-weight:700;color:var(--pri);margin-bottom:.3rem}
+    .hdr p{color:var(--txt-l);font-size:.95rem}
+
+    /* ===== CONTAINER / CARD ===== */
+    .ctn{max-width:700px;margin:0 auto;padding:0 1rem}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1.5rem}
+    .card-accent{border-left:4px solid var(--acc)}
+    .section-title{font-size:1.2rem;font-weight:700;color:var(--pri);margin-bottom:1rem}
+
+    /* ===== LOGIN PAGE ===== */
+    .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
+    .login-card{background:#fff;border-radius:16px;box-shadow:var(--shadow-lg);width:100%;max-width:420px;overflow:hidden}
+    .login-top{background:linear-gradient(135deg,#dce6f0,#e8eff8);padding:2.5rem 1.5rem 2rem;text-align:center}
+    .login-body{padding:2rem 1.5rem}
+    .login-body .fg{margin-bottom:1.25rem}
+    .login-body .fg label{display:block;font-size:.9rem;font-weight:600;color:var(--txt);margin-bottom:.4rem}
+    .login-body .fg input{width:100%;padding:.75rem 1rem;border:2px solid var(--bdr);border-radius:8px;font-size:1rem;font-family:inherit;transition:.2s}
+    .login-body .fg input:focus{outline:none;border-color:var(--pri-l);box-shadow:0 0 0 3px rgba(43,95,142,.12)}
+    .login-body .fg input::placeholder{color:#c4cdd8}
+    .login-btn{display:block;width:100%;padding:.85rem;background:var(--acc);color:var(--pri);border:none;border-radius:25px;font-size:1.1rem;font-weight:700;transition:.2s;margin-top:.5rem}
+    .login-btn:hover{background:var(--acc-h)}
+    .login-btn:disabled{opacity:.4;cursor:not-allowed}
+
+    /* ===== USER BAR ===== */
+    .user-bar{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem;background:rgba(255,255,255,.9);border-radius:8px;margin-bottom:1rem;font-size:.88rem;box-shadow:var(--shadow)}
+    .user-bar .user-name{font-weight:600;color:var(--pri)}
+    .user-bar .user-name::before{content:'👤 '}
+    .logout-btn{background:none;border:1.5px solid var(--bdr);border-radius:5px;padding:3px 10px;font-size:.78rem;color:var(--txt-l);transition:.2s}
+    .logout-btn:hover{border-color:var(--red);color:var(--red)}
+
+    /* ===== GCAL ===== */
+    .mini-cal{width:100%}
+    .mini-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}
+    .mini-cal-nav button{background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--pri);padding:.2rem .5rem}
+    .mini-cal-nav span{font-weight:600;color:var(--txt)}
+    .mini-cal table{width:100%;border-collapse:collapse;text-align:center;font-size:.85rem}
+    .mini-cal th{color:var(--txt-l);font-weight:500;padding:.4rem 0;font-size:.78rem}
+    .mini-cal td{padding:.35rem 0;cursor:default}
+    .mini-cal td.mc-avail{color:var(--pri);font-weight:600;cursor:pointer;border-radius:50%}
+    .mini-cal td.mc-avail:hover{background:var(--pri-l);color:#fff;border-radius:50%}
+    .mini-cal td.mc-sel{background:var(--pri);color:#fff;border-radius:50%}
+    .mini-cal td.mc-today{position:relative}
+    .mini-cal td.mc-today::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--acc)}
+    .mini-cal td.mc-past,.mini-cal td.mc-unav{color:var(--bdr);cursor:default}
+
+    /* ===== TZ ===== */
+    .tz-row{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;font-size:.85rem;color:var(--txt-l)}
+    .tz-row .lbl{font-weight:600;color:var(--txt)}
+
+    /* ===== WEEK NAV ===== */
+    .week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+    .week-nav .mo{font-size:1.1rem;font-weight:600;color:var(--pri)}
+    .wk-btn{background:none;border:2px solid var(--bdr);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--pri);font-size:1.2rem;transition:.2s}
+    .wk-btn:hover{background:var(--bg);border-color:var(--pri)}
+    .wk-btn:disabled{opacity:.3;cursor:not-allowed}
+
+    /* ===== DAY GRID ===== */
+    .day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.35rem;margin-bottom:1.25rem}
+    .day-hdr{text-align:center;font-size:.75rem;font-weight:500;color:var(--txt-l);padding-bottom:.3rem}
+    .day-cell{text-align:center;padding:.5rem .2rem;border-radius:8px;cursor:pointer;transition:.2s;border:2px solid transparent}
+    .day-cell .dn{font-size:1.1rem;font-weight:600;display:block}
+    .day-cell .dl{font-size:.63rem;color:var(--txt-l);display:block;margin-top:1px}
+    .day-cell.avail{background:#edf4fc;border-color:#c9ddf0;color:var(--pri)}
+    .day-cell.avail:hover{background:#d4e5f7;border-color:var(--pri-l)}
+    .day-cell.sel{background:var(--acc)!important;border-color:var(--acc)!important;color:#fff!important}
+    .day-cell.sel .dl{color:rgba(255,255,255,.8)}
+    .day-cell.unav{color:#a0aec0;cursor:default}
+    .day-cell.today .dn{text-decoration:underline}
+
+    /* ===== TIME SLOTS ===== */
+    .tg{margin-bottom:.75rem}
+    .tg-label{font-size:.8rem;color:var(--txt-l);margin-bottom:.3rem}
+    .ts-row{display:flex;flex-wrap:wrap;gap:.5rem}
+    .ts{padding:.5rem 1.1rem;border:2px solid var(--slot-bdr);border-radius:6px;background:var(--slot-bg);font-size:.9rem;font-weight:500;color:var(--pri);transition:.2s;user-select:none;cursor:pointer}
+    .ts:hover{background:#d4e0ed;border-color:var(--pri-l)}
+    .ts.sel{background:var(--pri);border-color:var(--pri);color:#fff}
+    .ts.ts-full{background:#fef2f2;border-color:#fca5a5;color:#ef4444;cursor:not-allowed;opacity:.8}
+    .ts.ts-past{background:#f8fafc;border-color:#e2e8f0;color:#cbd5e0;cursor:not-allowed}
+    .ts.ts-loading{opacity:.5;cursor:not-allowed}
+    .slot-check-msg{font-size:.8rem;color:var(--txt-l);margin-bottom:.6rem;display:flex;align-items:center;gap:.35rem}
+    .no-slot{color:var(--txt-l);font-size:.9rem;padding:1rem 0;text-align:center}
+
+    /* ===== CONFIRM POPUP ===== */
+    .popup-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:1100;display:flex;align-items:center;justify-content:center;padding:1rem}
+    .popup{background:#fff;border-radius:16px;width:100%;max-width:400px;box-shadow:var(--shadow-lg);overflow:hidden;animation:popUp .25s ease}
+    @keyframes popUp{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .popup-top{background:#f7fafc;padding:1.5rem;border-bottom:1px solid var(--bdr)}
+    .popup-top .big-d{display:flex;align-items:baseline;gap:.6rem;margin-bottom:.6rem}
+    .popup-top .big-n{font-size:2.2rem;font-weight:700;color:var(--pri);line-height:1}
+    .popup-top .d-meta{font-size:.9rem;color:var(--txt-l);line-height:1.3}
+    .popup-top .irow{display:flex;gap:1.5rem;font-size:.88rem;margin-top:.4rem}
+    .popup-top .il{color:var(--txt-l);min-width:45px}
+    .popup-top .iv{font-weight:500;color:var(--pri)}
+    .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);display:inline-block;margin-right:.35rem;vertical-align:middle}
+    .popup-body{padding:1.25rem 1.5rem;text-align:center}
+    .popup-body .who{font-size:.9rem;color:var(--txt-l);margin-bottom:1rem}
+    .popup-body .who strong{color:var(--txt)}
+    .popup-btns{display:flex;gap:.6rem}
+    .popup-btns button{flex:1;padding:.7rem;border-radius:10px;font-size:.95rem;font-weight:600;border:none;transition:.2s}
+    .btn-cancel{background:var(--bdr);color:var(--txt)}
+    .btn-cancel:hover{background:#ccd5de}
+    .btn-confirm{background:var(--acc);color:var(--pri)}
+    .btn-confirm:hover{background:var(--acc-h)}
+
+    /* ===== SUCCESS ===== */
+    .suc-icon{width:80px;height:80px;background:#c6f6d5;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:2.5rem;margin-bottom:1.25rem}
+    .suc-det{background:#f7fafc;border-radius:10px;padding:1.25rem;margin:1.5rem auto;max-width:360px;text-align:left;font-size:.9rem}
+    .suc-det .r{display:flex;padding:.3rem 0}
+    .suc-det .r .l{color:var(--txt-l);min-width:80px}
+    .suc-det .r .v{font-weight:500}
+    .btn-out{display:inline-block;margin-top:1.5rem;padding:.6rem 1.5rem;border:2px solid var(--pri);border-radius:25px;color:var(--pri);font-weight:600;background:none;font-size:.9rem;transition:.2s;cursor:pointer}
+    .btn-out:hover{background:var(--pri);color:#fff}
+
+    /* ===== ADMIN ===== */
+    .admin-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding-top:50px;overflow-y:auto}
+    .admin-panel{background:#fff;border-radius:14px;width:95%;max-width:600px;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-lg);margin-bottom:2rem}
+    .admin-hdr{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.5rem;border-bottom:1px solid var(--bdr);position:sticky;top:0;background:#fff;border-radius:14px 14px 0 0;z-index:1}
+    .admin-hdr h2{font-size:1.1rem;color:var(--pri)}
+    .admin-close{background:none;border:none;font-size:1.5rem;color:var(--txt-l);padding:4px}
+    .admin-body{padding:1.5rem}
+    .admin-tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid var(--bdr)}
+    .admin-tab{padding:.5rem 1rem;border:none;background:none;font-weight:600;font-size:.88rem;color:var(--txt-l);border-bottom:3px solid transparent;margin-bottom:-2px;transition:.2s}
+    .admin-tab.active{color:var(--pri);border-bottom-color:var(--acc)}
+    .admin-tab:hover{color:var(--pri)}
+    .slot-row{display:flex;align-items:center;gap:.75rem;padding:.55rem .75rem;border:1px solid var(--bdr);border-radius:8px;margin-bottom:.4rem;font-size:.88rem}
+    .slot-row .slot-time{font-weight:600;min-width:120px}
+    .slot-row .slot-day{color:var(--txt-l);flex:1}
+    .slot-del{background:none;border:none;color:var(--red);font-size:1.1rem;padding:2px 6px;cursor:pointer}
+    .add-slot-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem;align-items:flex-end}
+    .add-slot-row .fg{margin-bottom:0;flex:1;min-width:100px}
+    .add-slot-row .fg label{display:block;font-size:.76rem;font-weight:600;margin-bottom:.2rem}
+    .add-slot-row .fg input{width:100%;padding:.45rem .6rem;border:1.5px solid var(--bdr);border-radius:6px;font-size:.85rem;font-family:inherit}
+    .add-slot-row .fg input:focus{outline:none;border-color:var(--pri-l)}
+    .btn-add{padding:.45rem 1rem;background:var(--green);color:#fff;border:none;border-radius:6px;font-weight:600;font-size:.85rem;white-space:nowrap;height:36px}
+    .bk-item{border:1px solid var(--bdr);border-radius:8px;padding:.7rem 1rem;margin-bottom:.4rem}
+    .bk-item .bk-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.2rem}
+    .bk-item .bk-name{font-weight:600}
+    .bk-item .bk-time{font-size:.83rem;color:var(--pri-l);font-weight:500}
+    .bk-item .bk-info{font-size:.8rem;color:var(--txt-l)}
+    .bk-empty{text-align:center;padding:2rem;color:var(--txt-l)}
+    .setting-group{margin-bottom:1.2rem}
+    .setting-group label{display:block;font-weight:600;font-size:.88rem;margin-bottom:.3rem}
+    .setting-group input{width:100%;padding:.55rem .8rem;border:1.5px solid var(--bdr);border-radius:6px;font-size:.88rem;font-family:inherit}
+    .setting-group input:focus{outline:none;border-color:var(--pri-l)}
+    .setting-group .hint{font-size:.76rem;color:var(--txt-l);margin-top:.2rem}
+    .day-checks{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.35rem}
+    .day-check{display:flex;align-items:center;gap:.3rem;font-size:.85rem}
+    .day-check input[type=checkbox]{width:16px;height:16px}
+    .btn-save{padding:.55rem 1.5rem;background:var(--acc);color:var(--pri);border:none;border-radius:8px;font-weight:700;font-size:.88rem;margin-top:.5rem;cursor:pointer}
+
+    /* ===== PW MODAL ===== */
+    .pw-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1100;display:flex;align-items:center;justify-content:center}
+    .pw-box{background:#fff;border-radius:12px;padding:2rem;width:320px;text-align:center;box-shadow:var(--shadow-lg)}
+    .pw-box h3{margin-bottom:1rem;color:var(--pri)}
+    .pw-box input{width:100%;padding:.6rem;border:1.5px solid var(--bdr);border-radius:6px;font-size:1rem;text-align:center;margin-bottom:.75rem}
+    .pw-box input:focus{outline:none;border-color:var(--pri-l)}
+    .pw-err{color:var(--red);font-size:.85rem;margin-bottom:.5rem}
+    .pw-btns{display:flex;gap:.5rem;justify-content:center}
+    .pw-btns button{padding:.5rem 1.2rem;border-radius:6px;font-weight:600;font-size:.9rem;border:none}
+    .pw-ok{background:var(--pri);color:#fff}
+    .pw-cancel{background:var(--bdr);color:var(--txt)}
+
+    .footer{text-align:center;padding:1.5rem;color:var(--txt-l);font-size:.8rem}
+    @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .anim{animation:slideIn .3s ease}
+
+    /* ===== STUDENT HEADER ===== */
+    .stu-hdr{text-align:center;padding:2rem 1rem 1.5rem;background:linear-gradient(135deg,#dce6f0,#e8eff8)}
+    .stu-avatar{width:64px;height:64px;border-radius:50%;background:var(--pri);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:700;margin-bottom:.6rem;box-shadow:0 4px 12px rgba(26,60,94,.25)}
+    .stu-name-row{display:flex;align-items:center;justify-content:center;gap:.6rem}
+    .stu-name{font-size:1.25rem;font-weight:700;color:var(--pri)}
+    .stu-logout{background:none;border:1.5px solid var(--bdr);border-radius:6px;padding:4px 12px;font-size:.78rem;color:var(--txt-l);transition:.2s;white-space:nowrap}
+    .stu-logout:hover{border-color:var(--red);color:var(--red)}
+
+    /* ===== TWO-COLUMN LAYOUT ===== */
+    .main-layout{display:grid;grid-template-columns:1fr 340px;gap:1.25rem;max-width:1080px;margin:0 auto;padding:1.25rem 1.25rem 2rem}
+    .col-cal{}
+    .col-memo{}
+
+    /* ===== MEMO PANEL ===== */
+    .memo-card{height:fit-content;position:sticky;top:1rem}
+    .memo-hdr{display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem}
+    .memo-hdr-title{font-size:1.05rem;font-weight:700;color:var(--pri)}
+    .memo-desc{font-size:.82rem;color:var(--txt-l);margin-bottom:1.2rem;line-height:1.5}
+    .memo-empty{text-align:center;color:var(--txt-l);font-size:.88rem;padding:1.5rem .5rem;line-height:1.6}
+    .memo-entry{border:1px solid var(--bdr);border-radius:10px;padding:1rem;margin-bottom:.9rem;background:#fafbfc}
+    .memo-entry-date{font-size:.82rem;font-weight:700;color:var(--pri-l);margin-bottom:.3rem}
+    .memo-entry-time{font-size:.75rem;color:var(--txt-l);margin-bottom:.6rem}
+    .memo-textarea{width:100%;border:1.5px solid var(--bdr);border-radius:7px;padding:.6rem .75rem;font-size:.84rem;font-family:inherit;color:var(--txt);resize:vertical;min-height:80px;transition:.2s;background:#fff;line-height:1.5}
+    .memo-textarea:focus{outline:none;border-color:var(--pri-l);box-shadow:0 0 0 3px rgba(43,95,142,.1)}
+    .memo-save-hint{font-size:.73rem;color:var(--txt-l);margin-top:.3rem;text-align:right;opacity:0;transition:.4s}
+    .memo-save-hint.show{opacity:1}
+    .memo-section-label{font-size:.74rem;font-weight:700;color:var(--txt-l);text-transform:uppercase;letter-spacing:.04em;margin:.8rem 0 .3rem;display:flex;align-items:center;gap:.3rem}
+    .teacher-note-box{background:#f0f7ff;border:1.5px solid #bee3f8;border-radius:7px;padding:.55rem .75rem;font-size:.83rem;color:#2b6cb0;line-height:1.5;white-space:pre-wrap;min-height:40px}
+    .teacher-note-empty{font-size:.8rem;color:#a0aec0;font-style:italic;padding:.35rem 0}
+    .memo-teacher-area textarea{background:#fffde7;border-color:#f6e05e}
+    .memo-teacher-area textarea:focus{border-color:#d69e2e;box-shadow:0 0 0 3px rgba(214,158,46,.15)}
+    .cancel-btn{margin-top:.6rem;padding:5px 14px;border:1.5px solid var(--red);border-radius:6px;background:none;color:var(--red);font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s}
+    .cancel-btn:hover{background:var(--red);color:#fff}
+    .cancel-btn:disabled{opacity:.4;cursor:not-allowed;background:none;color:var(--red)}
+    .cancel-expired{font-size:.75rem;color:#a0aec0;margin-top:.5rem;font-style:italic}
+    .cancel-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:1200;display:flex;align-items:center;justify-content:center;padding:1rem}
+    .cancel-box{background:#fff;border-radius:14px;width:100%;max-width:380px;box-shadow:var(--shadow-lg);overflow:hidden;animation:popUp .25s ease}
+    .cancel-box-top{background:#fff5f5;padding:1.5rem;text-align:center;border-bottom:1px solid #fed7d7}
+    .cancel-box-top .cancel-icon{width:60px;height:60px;background:#fed7d7;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:.8rem}
+    .cancel-box-top h3{color:var(--red);font-size:1.1rem;margin-bottom:.3rem}
+    .cancel-box-body{padding:1.25rem 1.5rem}
+    .cancel-det{background:#f7fafc;border-radius:8px;padding:.8rem 1rem;margin-bottom:1rem;font-size:.88rem}
+    .cancel-det .r{display:flex;padding:.25rem 0}
+    .cancel-det .r .l{color:var(--txt-l);min-width:70px}
+    .cancel-det .r .v{font-weight:500}
+    .cancel-btns{display:flex;gap:.6rem}
+    .cancel-btns button{flex:1;padding:.65rem;border-radius:10px;font-size:.9rem;font-weight:600;border:none;transition:.2s;cursor:pointer}
+    .cancel-keep{background:var(--bdr);color:var(--txt)}
+    .cancel-keep:hover{background:#ccd5de}
+    .cancel-confirm{background:var(--red);color:#fff}
+    .cancel-confirm:hover{background:#c53030}
+
+    @media(max-width:860px){
+      .main-layout{grid-template-columns:1fr;padding:1rem}
+      .memo-card{position:static}
+    }
+    @media(max-width:600px){
+      .hdr h1{font-size:1.3rem}
+      .day-cell .dn{font-size:.95rem}
+      .popup-top .big-n{font-size:1.8rem}
+      .popup-top .irow{flex-direction:column;gap:.3rem}
+      .admin-panel{width:98%}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Lang Switcher -->
+<div class="lang-bar">
+  <button class="lang-btn" onclick="setLang('zh')">中文</button>
+  <button class="lang-btn active" onclick="setLang('ja')">日本語</button>
+</div>
+
+<!-- Admin FAB -->
+<button class="admin-fab" onclick="openAdminAuth()" title="管理介面">⚙</button>
+
+<!-- ==================== STEP 0: LOGIN ==================== -->
+<div id="step0">
+  <div class="login-wrap">
+    <div class="login-card anim">
+      <div class="login-top">
+        <div class="avatar">K</div>
+        <h1 style="font-size:1.6rem;font-weight:700;color:var(--pri);margin-bottom:.3rem">Kou</h1>
+        <p style="color:var(--txt-l);font-size:.9rem" data-zh="線上家教預約系統" data-ja="オンライン個別指導予約システム"></p>
+      </div>
+      <div class="login-body">
+        <p style="text-align:center;margin-bottom:1.5rem;color:var(--txt-l);font-size:.9rem" data-zh="請輸入您的資訊以開始預約" data-ja="予約を開始するには情報を入力してください"></p>
+        <form onsubmit="doLogin(event)">
+          <div class="fg">
+            <label data-zh="姓名" data-ja="氏名"></label>
+            <input type="text" id="loginName" required data-ph-zh="請輸入姓名" data-ph-ja="氏名を入力してください" autocomplete="name">
+          </div>
+          <div class="fg">
+            <label data-zh="電子信箱" data-ja="メールアドレス"></label>
+            <input type="email" id="loginEmail" required data-ph-zh="請輸入電子信箱" data-ph-ja="メールアドレスを入力してください" autocomplete="email">
+          </div>
+          <button type="submit" class="login-btn" data-zh="開始預約" data-ja="予約を始める"></button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STEP 1: CALENDAR ==================== -->
+<div id="step1" class="hidden">
+
+  <!-- Student Header -->
+  <div class="stu-hdr">
+    <div class="stu-avatar">K</div>
+    <div class="stu-name-row">
+      <div class="stu-name">
+        <span data-zh="受講生：" data-ja="受講生："></span><span id="dispName"></span>
+      </div>
+      <button class="stu-logout" onclick="doLogout()" data-zh="登出" data-ja="ログアウト"></button>
+    </div>
+  </div>
+
+  <!-- Two-column layout -->
+  <div class="main-layout">
+
+    <!-- Left: Calendar Card -->
+    <div class="col-cal">
+      <div class="card">
+        <div class="section-title" style="display:flex;align-items:center;gap:.5rem">
+          <span>📅</span>
+          <span data-zh="選擇日期與時段" data-ja="日時を選択"></span>
+        </div>
+        <div class="tz-row">
+          <span class="lbl" data-zh="時區" data-ja="タイムゾーン"></span>
+          <span id="tzDisp">Asia/Tokyo (GMT+9)</span>
+        </div>
+        <!-- Mini Month Calendar -->
+        <div id="miniCalWrap" style="margin-bottom:1.25rem"></div>
+        <!-- Week Nav + Day Grid -->
+        <div class="week-nav">
+          <button class="wk-btn" id="prevWk" onclick="chgWeek(-1)">‹</button>
+          <span class="mo" id="moLabel"></span>
+          <button class="wk-btn" id="nextWk" onclick="chgWeek(1)">›</button>
+        </div>
+        <div class="day-grid" id="dayGrid"></div>
+        <!-- Time Slots -->
+        <div id="tsArea"><div class="no-slot" data-zh="請先選擇一個日期" data-ja="日付を選択してください"></div></div>
+      </div>
+    </div>
+
+    <!-- Right: Memo Panel -->
+    <div class="col-memo">
+      <div class="card memo-card">
+        <div class="memo-hdr">
+          <span style="font-size:1.2rem">📚</span>
+          <span class="memo-hdr-title" data-zh="學習進度備忘" data-ja="学習進捗メモ"></span>
+        </div>
+        <div class="memo-desc" data-zh="每堂課的備忘欄位，方便記錄進度與作業。" data-ja="各レッスンごとのメモ欄です。進捗や宿題の記録に便利です。"></div>
+        <div id="memoList"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== CONFIRM POPUP ==================== -->
+<div id="confirmPopup" class="popup-overlay hidden">
+  <div class="popup">
+    <div class="popup-top">
+      <div class="big-d">
+        <span class="big-n" id="cfDay"></span>
+        <div class="d-meta"><div id="cfWd"></div><div id="cfMo"></div></div>
+      </div>
+      <div class="irow">
+        <span class="il" data-zh="課程" data-ja="授業"></span>
+        <span class="iv"><span class="dot"></span><span data-zh="家教課程" data-ja="個別指導"></span></span>
+      </div>
+      <div class="irow" style="margin-top:.25rem">
+        <span class="il" data-zh="時間" data-ja="時間"></span>
+        <span class="iv" id="cfTime"></span>
+      </div>
+    </div>
+    <div class="popup-body">
+      <div class="who" id="cfWho"></div>
+      <div class="popup-btns">
+        <button class="btn-cancel" onclick="closeConfirm()" data-zh="取消" data-ja="キャンセル"></button>
+        <button class="btn-confirm" onclick="doBook()" data-zh="確認預約" data-ja="予約確定"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STEP 2: SUCCESS ==================== -->
+<div id="step2" class="hidden">
+
+  <!-- Student Header (same as step1) -->
+  <div class="stu-hdr">
+    <div class="stu-avatar">K</div>
+    <div class="stu-name-row">
+      <div class="stu-name">
+        <span data-zh="受講生：" data-ja="受講生："></span><span id="dispName2"></span>
+      </div>
+      <button class="stu-logout" onclick="doLogout()" data-zh="登出" data-ja="ログアウト"></button>
+    </div>
+  </div>
+
+  <!-- Two-column layout -->
+  <div class="main-layout">
+
+    <!-- Left: Success Card -->
+    <div class="col-cal">
+      <div class="card anim" style="text-align:center;padding:2.2rem 1.5rem">
+        <div class="suc-icon">✓</div>
+        <h2 style="font-size:1.4rem;margin-bottom:.4rem" data-zh="預約成功！" data-ja="予約完了！"></h2>
+        <p style="color:var(--txt-l);font-size:.9rem" data-zh="已收到您的預約" data-ja="ご予約を承りました"></p>
+        <p style="font-size:.82rem;color:var(--txt-l);margin-bottom:1.2rem" data-zh="確認通知將寄送到您的信箱" data-ja="確認メールをお送りいたします"></p>
+        <div class="suc-det" id="sucDet"></div>
+        <button class="btn-out" onclick="backToCal()" data-zh="返回繼續預約" data-ja="予約画面に戻る"></button>
+      </div>
+    </div>
+
+    <!-- Right: Memo Panel (shows newly booked slot immediately) -->
+    <div class="col-memo">
+      <div class="card memo-card">
+        <div class="memo-hdr">
+          <span style="font-size:1.2rem">📚</span>
+          <span class="memo-hdr-title" data-zh="學習進度備忘" data-ja="学習進捗メモ"></span>
+        </div>
+        <div class="memo-desc" data-zh="每堂課的備忘欄位，方便記錄進度與作業。" data-ja="各レッスンごとのメモ欄です。進捗や宿題の記録に便利です。"></div>
+        <div id="memoList2"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== PW MODAL ==================== -->
+<div id="pwOverlay" class="pw-overlay hidden">
+  <div class="pw-box">
+    <h3 data-zh="管理者登入" data-ja="管理者ログイン"></h3>
+    <input type="password" id="pwInput" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()">
+    <div class="pw-err hidden" id="pwErr" data-zh="密碼錯誤" data-ja="パスワードが違います"></div>
+    <div class="pw-btns">
+      <button class="pw-cancel" onclick="closePw()" data-zh="取消" data-ja="キャンセル"></button>
+      <button class="pw-ok" onclick="checkPw()" data-zh="登入" data-ja="ログイン"></button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ADMIN PANEL ==================== -->
+<div id="adminOverlay" class="admin-overlay hidden">
+  <div class="admin-panel">
+    <div class="admin-hdr">
+      <h2 data-zh="⚙ 管理者介面" data-ja="⚙ 管理者パネル"></h2>
+      <button class="admin-close" onclick="closeAdmin()">✕</button>
+    </div>
+    <div class="admin-body">
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="showAdTab(0,this)" data-zh="時段管理" data-ja="時間帯管理"></button>
+        <button class="admin-tab" onclick="showAdTab(1,this)" data-zh="預約列表" data-ja="予約一覧"></button>
+        <button class="admin-tab" onclick="showAdTab(2,this)" data-zh="設定" data-ja="設定"></button>
+      </div>
+      <!-- Tab 0: Slots -->
+      <div class="ad-tab" id="adTab0">
+        <div id="slotList"></div>
+        <div class="add-slot-row">
+          <div class="fg"><label data-zh="開始" data-ja="開始"></label><input type="time" id="newStart" value="09:00"></div>
+          <div class="fg"><label data-zh="結束" data-ja="終了"></label><input type="time" id="newEnd" value="09:50"></div>
+          <button class="btn-add" onclick="addSlot()" data-zh="＋ 新增" data-ja="＋ 追加"></button>
+        </div>
+      </div>
+      <!-- Tab 1: Bookings -->
+      <div class="ad-tab hidden" id="adTab1"><div id="bkList"></div></div>
+      <!-- Tab 2: Settings -->
+      <div class="ad-tab hidden" id="adTab2">
+        <div class="setting-group">
+          <label data-zh="管理密碼" data-ja="管理パスワード"></label>
+          <input type="text" id="setPass" value="0857">
+          <div class="hint" data-zh="管理介面的登入密碼" data-ja="管理パネルのログインパスワード"></div>
+        </div>
+        <div class="setting-group">
+          <label data-zh="通知信箱" data-ja="通知メールアドレス"></label>
+          <input type="email" id="setEmail" value="yougiveloveabadname0857@gmail.com">
+        </div>
+        <div class="setting-group">
+          <label data-zh="課程時長（分鐘）" data-ja="授業時間（分）"></label>
+          <input type="number" id="setDur" value="50" min="10" max="180">
+        </div>
+        <div class="setting-group">
+          <label data-zh="可預約天數" data-ja="予約可能日数"></label>
+          <input type="number" id="setMaxD" value="30" min="7" max="90">
+        </div>
+        <div class="setting-group">
+          <label data-zh="可預約的星期" data-ja="予約可能な曜日"></label>
+          <div class="day-checks" id="dayChecks"></div>
+        </div>
+        <div class="setting-group">
+          <label>Google Apps Script URL</label>
+          <input type="url" id="setScript" placeholder="https://script.google.com/macros/s/.../exec">
+          <div class="hint" data-zh="部署 Apps Script 後的網址，用於自動寫入 Google 行事曆（詳見 google-apps-script.js）" data-ja="Apps Script デプロイ後のURL。Google Calendar に自動書き込みます（google-apps-script.js 参照）"></div>
+          <div id="scriptStatus" style="margin-top:.4rem;font-size:.82rem"></div>
+          <button onclick="testScript()" style="margin-top:.4rem;padding:.35rem .8rem;border:1.5px solid var(--pri-l);border-radius:5px;background:none;color:var(--pri-l);font-size:.8rem;font-weight:600;cursor:pointer" data-zh="測試連線" data-ja="接続テスト"></button>
+        </div>
+        <button class="btn-save" onclick="saveSettings()" data-zh="儲存設定" data-ja="設定を保存"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CANCEL POPUP ==================== -->
+<div id="cancelPopup" class="cancel-overlay hidden">
+  <div class="cancel-box">
+    <div class="cancel-box-top">
+      <div class="cancel-icon">⚠</div>
+      <h3 id="cancelTitle" data-zh="確定要取消此預約嗎？" data-ja="この予約をキャンセルしますか？"></h3>
+      <p style="font-size:.85rem;color:var(--txt-l)" data-zh="此操作無法復原" data-ja="この操作は元に戻せません"></p>
+    </div>
+    <div class="cancel-box-body">
+      <div class="cancel-det" id="cancelDet"></div>
+      <div class="cancel-btns">
+        <button class="cancel-keep" onclick="closeCancelPopup()" data-zh="保留預約" data-ja="予約を保持"></button>
+        <button class="cancel-confirm" id="cancelConfirmBtn" onclick="doCancel()" data-zh="確認取消" data-ja="キャンセル確定"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">© 2026 Kou <span data-zh="線上家教預約系統" data-ja="オンライン個別指導予約システム"></span></div>
+
+<script>
+// ================ I18N ================
+const I18N={
+  zh:{dayNames:['日','一','二','三','四','五','六'],dayFull:['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],today:'今天',noSlot:'無時段',pickDate:'請先選擇一個日期',noAvail:'此日期沒有可用時段',am:'上午',pm:'下午'},
+  ja:{dayNames:['日','月','火','水','木','金','土'],dayFull:['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'],months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],today:'今日',noSlot:'該当なし',pickDate:'日付を選択してください',noAvail:'この日は空きがありません',am:'午前',pm:'午後'}
+};
+let LANG='zh';
+function setLang(l){
+  LANG=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes(l==='zh'?'中':'日')));
+  document.querySelectorAll('[data-zh]').forEach(el=>{el.textContent=el.getAttribute('data-'+l)});
+  document.querySelectorAll('[data-ph-zh]').forEach(el=>{el.placeholder=el.getAttribute('data-ph-'+l)});
+  document.querySelectorAll('select option[data-zh]').forEach(el=>{el.textContent=el.getAttribute('data-'+l)});
+  renderWeek(); if(selDate)renderSlots(); renderMemoPanel();
+}
+
+// ================ CONFIG ================
+const DEF={
+  password:'0857',email:'yougiveloveabadname0857@gmail.com',duration:50,maxDays:30,
+  availDays:[0,1,2,3,4,5,6],
+  weekdaySlots:[{s:'18:00',e:'18:50'},{s:'19:00',e:'19:50'}],
+  weekendSlots:[{s:'10:00',e:'10:50'},{s:'11:00',e:'11:50'},{s:'12:00',e:'12:50'},{s:'13:00',e:'13:50'},{s:'14:00',e:'14:50'},{s:'15:00',e:'15:50'},{s:'16:00',e:'16:50'}],
+  slots:[{s:'18:00',e:'18:50'},{s:'19:00',e:'19:50'}],
+  booked:[],bookings:[],
+  scriptUrl:'https://script.google.com/macros/s/AKfycbwsTc77dHjqs12nP96iVhT7e-x27VugX3mYuFFJvhdtsSmHiKipaYSM7Sk5SzRPMyov/exec'
+};
+let CFG=loadCfg();
+function loadCfg(){try{const s=localStorage.getItem('kou_bk');if(s){const c=JSON.parse(s);return{...DEF,...c}}}catch(e){}return{...DEF}}
+function saveCfg(){try{localStorage.setItem('kou_bk',JSON.stringify(CFG))}catch(e){}}
+
+// ================ STATE ================
+let weekStart=getWeekStart(new Date());
+let selDate=null,selSlot=null;
+let currentUser={name:'',email:''};
+
+function getWeekStart(d){const r=new Date(d);r.setHours(0,0,0,0);const day=r.getDay();r.setDate(r.getDate()-(day===0?6:day-1));return r}
+function fmtISO(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function fmtTime(h,m){const L=I18N[LANG];const hi=parseInt(h);if(hi<12)return`${L.am}${hi}:${m}`;if(hi===12)return`${L.pm}12:${m}`;return`${L.pm}${hi-12}:${m}`}
+function show(id){document.getElementById(id).classList.remove('hidden')}
+function hide(id){document.getElementById(id).classList.add('hidden')}
+
+// ================ LOGIN ================
+function doLogin(e){
+  e.preventDefault();
+  const name=document.getElementById('loginName').value.trim();
+  const email=document.getElementById('loginEmail').value.trim();
+  if(!name||!email)return;
+  currentUser={name,email};
+  try{localStorage.setItem('kou_user',JSON.stringify(currentUser))}catch(e){}
+  enterCalendar();
+}
+function doLogout(){
+  currentUser={name:'',email:''};
+  isAdmin=false;
+  try{localStorage.removeItem('kou_user')}catch(e){}
+  hide('step1');hide('step2');show('step0');
+  window.scrollTo(0,0);
+}
+function enterCalendar(){
+  const name=currentUser.name||'?';
+  document.getElementById('dispName').textContent=name;
+  document.getElementById('dispName2').textContent=name;
+  hide('step0');hide('step2');show('step1');
+  renderMiniCal();
+  renderWeek();
+  renderMemoPanel();
+  document.getElementById('tsArea').innerHTML=`<div class="no-slot">${I18N[LANG].pickDate}</div>`;
+  window.scrollTo(0,0);
+}
+
+// ================ MEMO PANEL ================
+let isAdmin=false; // tracks teacher/admin login state
+function normEmail(e){return(e||'').trim().toLowerCase()}
+function getMemoKey(date,start){return`memo_${normEmail(currentUser.email)}_${date}_${start}`}
+function getTeacherMemoKey(date,start){return`teacher_memo_${date}_${start}`}
+
+// Per-user booking storage (independent of CFG for reliability)
+function getUserBkKey(){return`kou_ubk_${normEmail(currentUser.email)}`}
+function loadUserBookings(){
+  try{return JSON.parse(localStorage.getItem(getUserBkKey())||'[]')}catch(e){return[]}
+}
+function saveUserBooking(bk){
+  const arr=loadUserBookings();
+  arr.push(bk);
+  try{localStorage.setItem(getUserBkKey(),JSON.stringify(arr))}catch(e){}
+}
+function saveMemo(date,start,text){
+  try{localStorage.setItem(getMemoKey(date,start),text)}catch(e){}
+  // Update both hint elements (one per memoList)
+  ['memoHint_','memoHint2_'].forEach(prefix=>{
+    const hint=document.getElementById(prefix+date+'_'+start.replace(':',''));
+    if(hint){hint.classList.add('show');setTimeout(()=>hint.classList.remove('show'),1500)}
+  });
+}
+function saveTeacherMemo(date,start,text){
+  try{localStorage.setItem(getTeacherMemoKey(date,start),text)}catch(e){}
+  ['tHint_','tHint2_'].forEach(prefix=>{
+    const hint=document.getElementById(prefix+date+'_'+start.replace(':',''));
+    if(hint){hint.classList.add('show');setTimeout(()=>hint.classList.remove('show'),1500)}
+  });
+}
+function _buildMemoEntries(bookings,idSuffix){
+  const days=LANG==='zh'?['日','一','二','三','四','五','六']:['日','月','火','水','木','金','土'];
+  return bookings.map(b=>{
+    const dt=new Date(b.date+'T00:00:00');
+    const wd=days[dt.getDay()];
+    const [y,m,d]=b.date.split('-');
+    const dateLabel=`${y}年${parseInt(m)}月${parseInt(d)}日（${wd}）`;
+    const savedMemo=localStorage.getItem(getMemoKey(b.date,b.start))||'';
+    const teacherMemo=localStorage.getItem(getTeacherMemoKey(b.date,b.start))||'';
+    const hintId=`memoHint${idSuffix}_${b.date}_${b.start.replace(':','')}`;
+    const tHintId=`tHint${idSuffix}_${b.date}_${b.start.replace(':','')}`;
+    const phStu=LANG==='zh'?'記錄今日進度、作業、筆記…':'今日の進捗・宿題・メモを記入…';
+    const phTea=LANG==='zh'?'教師備注：課程重點、作業、評語…':'授業メモ：課題・評価など…';
+    const labelStu=LANG==='zh'?'📝 學生備注':'📝 生徒メモ';
+    const labelTea=LANG==='zh'?'✏️ 教師備注':'✏️ 先生メモ';
+    const savedTxt=LANG==='zh'?'已儲存 ✓':'保存済み ✓';
+    // Teacher note display: editable if admin, read-only for student
+    const teacherSection=isAdmin
+      ?`<div class="memo-teacher-area">
+          <textarea class="memo-textarea" placeholder="${phTea}"
+            oninput="saveTeacherMemo('${b.date}','${b.start}',this.value)"
+          >${teacherMemo}</textarea>
+          <div class="memo-save-hint" id="${tHintId}">${savedTxt}</div>
+        </div>`
+      :(teacherMemo
+          ?`<div class="teacher-note-box">${teacherMemo.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>`
+          :`<div class="teacher-note-empty">${LANG==='zh'?'（教師尚未填寫）':'（先生未記入）'}</div>`);
+    // Cancel button: only show if lesson is more than 24h away
+    const lessonTime=new Date(`${b.date}T${b.start}:00`);
+    const hoursLeft=(lessonTime-new Date())/(1000*60*60);
+    let cancelHTML='';
+    if(hoursLeft>24){
+      const cLabel=LANG==='zh'?'取消預約':'予約キャンセル';
+      cancelHTML=`<button class="cancel-btn" onclick="openCancelPopup('${b.date}','${b.start}','${b.end}','${(b.name||'').replace(/'/g,"\\'")}','${(b.email||'').replace(/'/g,"\\'")}')">${cLabel}</button>`;
+    }else if(hoursLeft>0){
+      cancelHTML=`<div class="cancel-expired">${LANG==='zh'?'（已過取消期限：課前24小時）':'（キャンセル期限切れ：授業24時間前まで）'}</div>`;
+    }
+    return`<div class="memo-entry">
+      <div class="memo-entry-date">${dateLabel}</div>
+      <div class="memo-entry-time">⏰ ${b.start} - ${b.end}</div>
+      <div class="memo-section-label">${labelStu}</div>
+      <textarea class="memo-textarea" placeholder="${phStu}"
+        oninput="saveMemo('${b.date}','${b.start}',this.value)"
+      >${savedMemo}</textarea>
+      <div class="memo-save-hint" id="${hintId}">${savedTxt}</div>
+      <div class="memo-section-label">${labelTea}</div>
+      ${teacherSection}
+      ${cancelHTML}
+    </div>`;
+  }).join('');
+}
+function renderMemoPanel(){
+  const list=document.getElementById('memoList');
+  const list2=document.getElementById('memoList2');
+  if(!list&&!list2)return;
+
+  // Primary source: per-user localStorage key (most reliable)
+  let userBk=loadUserBookings();
+  // Fallback: CFG.bookings with case-insensitive email match
+  if(!userBk.length){
+    const ce=normEmail(currentUser.email);
+    userBk=(CFG.bookings||[]).filter(b=>normEmail(b.email)===ce);
+  }
+  // Sort by date ascending
+  userBk=userBk.filter(b=>b.date&&b.start&&b.end)
+    .sort((a,b)=>a.date>b.date?1:a.date<b.date?-1:0);
+
+  const emptyHTML=`<div class="memo-empty">${
+    LANG==='zh'
+      ?'尚無預約。<br>預約後，每堂課的備忘欄位將會顯示在這裡。'
+      :'まだ予約がありません。<br>予約するとここにレッスンごとのメモが表示されます。'
+  }</div>`;
+  if(list)  list.innerHTML =userBk.length?_buildMemoEntries(userBk,'') :emptyHTML;
+  if(list2) list2.innerHTML=userBk.length?_buildMemoEntries(userBk,'2'):emptyHTML;
+}
+
+// ================ CANCEL BOOKING ================
+let pendingCancel=null;
+function openCancelPopup(date,start,end,name,email){
+  pendingCancel={date,start,end,name,email};
+  const days=LANG==='zh'?['日','一','二','三','四','五','六']:['日','月','火','水','木','金','土'];
+  const dt=new Date(date+'T00:00:00');
+  const wd=days[dt.getDay()];
+  const [y,m,d]=date.split('-');
+  const dateLabel=`${y}年${parseInt(m)}月${parseInt(d)}日（${wd}）`;
+  const lbls=LANG==='zh'
+    ?{date:'日期',time:'時間',name:'姓名'}
+    :{date:'日付',time:'時間',name:'氏名'};
+  document.getElementById('cancelDet').innerHTML=`
+    <div class="r"><span class="l">${lbls.name}</span><span class="v">${name}</span></div>
+    <div class="r"><span class="l">${lbls.date}</span><span class="v">${dateLabel}</span></div>
+    <div class="r"><span class="l">${lbls.time}</span><span class="v">${start} - ${end}</span></div>`;
+  show('cancelPopup');
+}
+function closeCancelPopup(){hide('cancelPopup');pendingCancel=null}
+function doCancel(){
+  if(!pendingCancel)return;
+  const btn=document.getElementById('cancelConfirmBtn');
+  const origTxt=btn.textContent;
+  btn.disabled=true;
+  btn.textContent=LANG==='zh'?'取消中...':'キャンセル中...';
+  const c=pendingCancel;
+
+  const onDone=(ok)=>{
+    // Remove from per-user localStorage
+    removeUserBooking(c.date,c.start);
+    // Remove from CFG.bookings and CFG.booked
+    const bKey=`${c.date}_${c.start}`;
+    CFG.bookings=(CFG.bookings||[]).filter(b=>!(b.date===c.date&&b.start===c.start&&normEmail(b.email)===normEmail(c.email)));
+    CFG.booked=(CFG.booked||[]).filter(k=>k!==bKey);
+    // Clear busy slot cache for that date so calendar refreshes
+    delete busySlotCache[c.date];
+    saveCfg();
+    hide('cancelPopup');
+    btn.disabled=false;btn.textContent=origTxt;
+    pendingCancel=null;
+    renderMemoPanel();
+    if(selDate&&fmtISO(selDate)===c.date){renderSlots()}
+  };
+
+  if(CFG.scriptUrl){
+    fetch(CFG.scriptUrl,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({
+        action:'cancel',
+        date:c.date,startTime:c.start,endTime:c.end,
+        studentName:c.name,studentEmail:c.email
+      }),
+      mode:'no-cors'
+    }).then(()=>onDone(true)).catch(()=>onDone(false));
+  }else{
+    onDone(false);
+  }
+}
+function removeUserBooking(date,start){
+  let arr=loadUserBookings();
+  arr=arr.filter(b=>!(b.date===date&&b.start===start));
+  try{localStorage.setItem(getUserBkKey(),JSON.stringify(arr))}catch(e){}
+}
+
+// ================ MINI MONTH CALENDAR ================
+let mcYear,mcMonth;
+function initMcDate(){const n=new Date();mcYear=n.getFullYear();mcMonth=n.getMonth()}
+function renderMiniCal(){
+  if(mcYear===undefined)initMcDate();
+  const wrap=document.getElementById('miniCalWrap');if(!wrap)return;
+  const L=I18N[LANG];
+  const today=new Date();today.setHours(0,0,0,0);
+  const maxD=new Date(today);maxD.setDate(maxD.getDate()+CFG.maxDays);
+  const first=new Date(mcYear,mcMonth,1);
+  const startDow=(first.getDay()+6)%7; // Monday=0
+  const daysInMonth=new Date(mcYear,mcMonth+1,0).getDate();
+  const moName=L.months[mcMonth];
+  let html=`<div class="mini-cal"><div class="mini-cal-nav">`;
+  html+=`<button onclick="chgMiniCal(-1)">‹</button>`;
+  html+=`<span>${mcYear}年 ${moName}</span>`;
+  html+=`<button onclick="chgMiniCal(1)">›</button></div>`;
+  html+=`<table><thead><tr>`;
+  const dayH=LANG==='zh'?['一','二','三','四','五','六','日']:['月','火','水','木','金','土','日'];
+  dayH.forEach(d=>{html+=`<th>${d}</th>`});
+  html+=`</tr></thead><tbody><tr>`;
+  for(let i=0;i<startDow;i++)html+=`<td></td>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const dt=new Date(mcYear,mcMonth,d);dt.setHours(0,0,0,0);
+    const dow=dt.getDay();
+    const isPast=dt<today;
+    const isFar=dt>maxD;
+    const isAv=CFG.availDays.includes(dow);
+    const isToday=dt.getTime()===today.getTime();
+    const isSel=selDate&&dt.getTime()===selDate.getTime();
+    let cls='';
+    if(isSel)cls='mc-sel';
+    else if(!isPast&&!isFar&&isAv)cls='mc-avail';
+    else cls='mc-past';
+    if(isToday)cls+=' mc-today';
+    const click=(!isPast&&!isFar&&isAv)?` onclick="pickMiniCal(${mcYear},${mcMonth},${d})"`:'';
+    html+=`<td class="${cls}"${click}>${d}</td>`;
+    if((startDow+d)%7===0&&d<daysInMonth)html+=`</tr><tr>`;
+  }
+  html+=`</tr></tbody></table></div>`;
+  wrap.innerHTML=html;
+}
+function chgMiniCal(dir){
+  mcMonth+=dir;
+  if(mcMonth>11){mcMonth=0;mcYear++}
+  if(mcMonth<0){mcMonth=11;mcYear--}
+  // Don't go before current month
+  const now=new Date();
+  if(mcYear<now.getFullYear()||(mcYear===now.getFullYear()&&mcMonth<now.getMonth())){
+    mcYear=now.getFullYear();mcMonth=now.getMonth();
+  }
+  renderMiniCal();
+}
+function pickMiniCal(y,m,d){
+  const dt=new Date(y,m,d);dt.setHours(0,0,0,0);
+  selDate=dt;selSlot=null;
+  // Sync week view to this date
+  weekStart=getWeekStart(dt);
+  renderMiniCal();renderWeek();renderSlots();
+}
+// Auto-login if remembered
+function tryAutoLogin(){
+  try{
+    const s=localStorage.getItem('kou_user');
+    if(s){currentUser=JSON.parse(s);if(currentUser.name){enterCalendar();return true}}
+  }catch(e){}
+  return false;
+}
+
+// ================ WEEK ================
+function renderWeek(){
+  const grid=document.getElementById('dayGrid');if(!grid)return;
+  grid.innerHTML='';
+  const L=I18N[LANG];
+  const today=new Date();today.setHours(0,0,0,0);
+  const maxD=new Date(today);maxD.setDate(maxD.getDate()+CFG.maxDays);
+  const thisWk=getWeekStart(new Date());
+  document.getElementById('prevWk').disabled=weekStart<=thisWk;
+  const wEnd=new Date(weekStart);wEnd.setDate(wEnd.getDate()+6);
+  const ml=document.getElementById('moLabel');
+  ml.textContent=weekStart.getMonth()===wEnd.getMonth()
+    ?`${weekStart.getFullYear()}年 ${L.months[weekStart.getMonth()]}`
+    :`${L.months[weekStart.getMonth()]} - ${L.months[wEnd.getMonth()]}`;
+  for(let i=0;i<7;i++){const h=document.createElement('div');h.className='day-hdr';h.textContent=`(${L.dayNames[(i+1)%7]})`;grid.appendChild(h)}
+  for(let i=0;i<7;i++){
+    const d=new Date(weekStart);d.setDate(d.getDate()+i);
+    const cell=document.createElement('div');cell.className='day-cell';
+    const dow=d.getDay(),past=d<today,far=d>maxD,av=CFG.availDays.includes(dow),isT=d.getTime()===today.getTime(),isS=selDate&&d.getTime()===selDate.getTime();
+    if(isT)cell.classList.add('today');
+    if(!past&&!far&&av){cell.classList.add('avail');cell.onclick=()=>pickDate(new Date(d))}else{cell.classList.add('unav')}
+    if(isS)cell.classList.add('sel');
+    const num=document.createElement('span');num.className='dn';num.textContent=`${d.getDate()}日`;cell.appendChild(num);
+    const lb=document.createElement('span');lb.className='dl';
+    if(isT)lb.textContent=L.today;else if(!av||past||far)lb.textContent=L.noSlot;
+    cell.appendChild(lb);grid.appendChild(cell);
+  }
+}
+function chgWeek(dir){const nw=new Date(weekStart);nw.setDate(nw.getDate()+dir*7);if(nw<getWeekStart(new Date()))return;weekStart=nw;renderWeek();renderMiniCal()}
+
+// ================ SLOTS ================
+const busySlotCache={};  // {dateStr: [{start,end}] | null}
+
+function pickDate(d){selDate=d;selSlot=null;renderWeek();renderMiniCal();renderSlots()}
+function getSlotsForDate(d){
+  const dow=d.getDay();
+  if(dow===0||dow===6)return CFG.weekendSlots||CFG.slots;
+  return CFG.weekdaySlots||CFG.slots;
+}
+
+function toMin(t){const[h,m]=t.split(':').map(Number);return h*60+m}
+function isSlotBusy(sl,busySlots){
+  const ss=toMin(sl.s),se=toMin(sl.e);
+  return busySlots.some(b=>{const bs=toMin(b.start),be=toMin(b.end);return ss<be&&se>bs});
+}
+
+async function fetchBusySlots(dateStr){
+  if(!CFG.scriptUrl)return;
+  try{
+    const res=await fetch(CFG.scriptUrl+'?checkDate='+dateStr,{mode:'cors',redirect:'follow'});
+    const data=await res.json();
+    busySlotCache[dateStr]=data.busySlots||[];
+  }catch(e){
+    busySlotCache[dateStr]=[];
+  }
+  if(selDate&&fmtISO(selDate)===dateStr)_drawSlots(busySlotCache[dateStr]);
+}
+
+function renderSlots(){
+  const area=document.getElementById('tsArea');
+  if(!selDate){area.innerHTML=`<div class="no-slot">${I18N[LANG].pickDate}</div>`;return}
+  const ds=fmtISO(selDate);
+  if(busySlotCache[ds]!==undefined){
+    _drawSlots(busySlotCache[ds]);
+  }else{
+    _drawSlots(null); // render with loading state
+    if(CFG.scriptUrl)fetchBusySlots(ds);
+  }
+}
+
+function _drawSlots(busySlots){
+  const area=document.getElementById('tsArea');area.innerHTML='';
+  const L=I18N[LANG],now=new Date(),ds=fmtISO(selDate);
+  const activeSlots=getSlotsForDate(selDate);
+  if(!activeSlots.length){area.innerHTML=`<div class="no-slot">${L.noAvail}</div>`;return}
+
+  // Loading indicator while awaiting calendar check
+  if(busySlots===null&&CFG.scriptUrl){
+    area.innerHTML+=`<div class="slot-check-msg">⏳ ${LANG==='zh'?'正在確認行事曆空位…':'カレンダー確認中…'}</div>`;
+  }
+
+  const row=document.createElement('div');row.className='ts-row';row.style.flexWrap='wrap';
+  let hasAny=false;
+
+  activeSlots.forEach(sl=>{
+    const key=`${ds}_${sl.s}`;
+    const slotTime=new Date(`${ds}T${sl.s}:00`);
+    const isPast=slotTime<=now;
+    const isLocalBooked=CFG.booked&&CFG.booked.includes(key);
+    const isCalBusy=busySlots&&isSlotBusy(sl,busySlots);
+    const isLoading=busySlots===null&&CFG.scriptUrl;
+
+    const btn=document.createElement('div');
+    if(isPast){
+      btn.className='ts ts-past';
+      btn.title=LANG==='zh'?'此時段已過':'この時間は過ぎています';
+      btn.innerHTML=`${sl.s}<br><span style="font-size:.72rem">${LANG==='zh'?'已過':'終了'}</span>`;
+    }else if(isLocalBooked||isCalBusy){
+      btn.className='ts ts-full';
+      btn.title=LANG==='zh'?'此時段已滿，請選擇其他時段':'この時間は満席です';
+      btn.innerHTML=`${sl.s}<br><span style="font-size:.72rem">${LANG==='zh'?'已滿':'満席'}</span>`;
+    }else if(isLoading){
+      btn.className='ts ts-loading';
+      const[sh,sm]=sl.s.split(':');btn.textContent=fmtTime(sh,sm);
+    }else{
+      btn.className='ts';
+      const[sh,sm]=sl.s.split(':');btn.textContent=fmtTime(sh,sm);
+      btn.dataset.s=sl.s;btn.dataset.e=sl.e;
+      btn.onclick=()=>pickSlot(sl,btn);
+    }
+    row.appendChild(btn);
+    hasAny=true;
+  });
+
+  if(!hasAny)area.innerHTML+=`<div class="no-slot">${L.noAvail}</div>`;
+  else area.appendChild(row);
+
+  // Re-apply selection
+  if(selSlot){
+    const prev=row.querySelector(`[data-s="${selSlot.s}"]`);
+    if(prev)prev.classList.add('sel');
+  }
+}
+
+// ================ CONFIRM POPUP ================
+function pickSlot(sl,el){
+  document.querySelectorAll('.ts').forEach(s=>s.classList.remove('sel'));
+  el.classList.add('sel');selSlot=sl;
+  const L=I18N[LANG];
+  document.getElementById('cfDay').textContent=selDate.getDate();
+  document.getElementById('cfWd').textContent=L.dayFull[selDate.getDay()];
+  document.getElementById('cfMo').textContent=`${selDate.getFullYear()}年 ${L.months[selDate.getMonth()]}`;
+  const[sh,sm]=sl.s.split(':'),[eh,em]=sl.e.split(':');
+  document.getElementById('cfTime').textContent=`${fmtTime(sh,sm)} - ${fmtTime(eh,em)}`;
+  const whoTxt=LANG==='zh'
+    ?`以 <strong>${currentUser.name}</strong> 的身份預約`
+    :`<strong>${currentUser.name}</strong> として予約します`;
+  document.getElementById('cfWho').innerHTML=whoTxt;
+  show('confirmPopup');
+}
+function closeConfirm(){hide('confirmPopup')}
+
+// ================ BOOK ================
+function doBook(){
+  const cfBtn=document.querySelector('.btn-confirm');
+  const origTxt=cfBtn.textContent;
+  cfBtn.disabled=true;
+  cfBtn.textContent=LANG==='zh'?'預約中...':'予約中...';
+
+  const L=I18N[LANG];
+  const data={
+    name:currentUser.name,email:currentUser.email,
+    date:fmtISO(selDate),
+    dateDisp:`${selDate.getFullYear()}/${selDate.getMonth()+1}/${selDate.getDate()} (${L.dayNames[selDate.getDay()]})`,
+    time:document.getElementById('cfTime').textContent,slot:selSlot
+  };
+
+  // 1) 呼叫 Google Apps Script → 自動寫入行事曆
+  const apiPayload={
+    studentName:data.name,
+    studentEmail:data.email,
+    date:data.date,
+    startTime:selSlot.s,
+    endTime:selSlot.e
+  };
+
+  const onDone=(gcalOk)=>{
+    // 2) 儲存本地紀錄
+    const newBk={...data,start:selSlot.s,end:selSlot.e,ts:new Date().toISOString(),gcal:gcalOk};
+    // Save to per-user key (reliable, no email-match issues)
+    saveUserBooking(newBk);
+    // Also save to shared CFG for admin panel
+    CFG.bookings.push(newBk);
+    CFG.booked.push(`${data.date}_${selSlot.s}`);
+    saveCfg();
+
+    // 3) 成功畫面
+    const lbls=LANG==='zh'
+      ?{name:'姓名',email:'信箱',date:'日期',time:'時間',cal:'行事曆'}
+      :{name:'氏名',email:'メール',date:'日付',time:'時間',cal:'カレンダー'};
+    const calStatus=gcalOk
+      ?(LANG==='zh'?'✅ 已寫入 Google 行事曆':'✅ Google Calendar に登録済み')
+      :(LANG==='zh'?'⚠️ 未連接（僅記錄在本地）':'⚠️ 未接続（ローカル記録のみ）');
+    document.getElementById('sucDet').innerHTML=`
+      <div class="r"><span class="l">${lbls.name}</span><span class="v">${data.name}</span></div>
+      <div class="r"><span class="l">${lbls.email}</span><span class="v">${data.email}</span></div>
+      <div class="r"><span class="l">${lbls.date}</span><span class="v">${data.dateDisp}</span></div>
+      <div class="r"><span class="l">${lbls.time}</span><span class="v">${data.time}</span></div>
+      <div class="r"><span class="l">${lbls.cal}</span><span class="v">${calStatus}</span></div>`;
+
+    hide('confirmPopup');hide('step1');show('step2');
+    cfBtn.disabled=false;cfBtn.textContent=origTxt;
+    // Render memo panel after DOM has updated
+    requestAnimationFrame(()=>{renderMemoPanel();window.scrollTo(0,0);});
+  };
+
+  if(CFG.scriptUrl){
+    fetch(CFG.scriptUrl,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify(apiPayload),
+      mode:'no-cors'
+    }).then(()=>{
+      // no-cors 模式無法讀取回應，但請求已送出
+      // 嘗試用 GET redirect 方式確認
+      return fetch(CFG.scriptUrl+'?check=1',{mode:'cors',redirect:'follow'}).then(r=>r.json()).catch(()=>null);
+    }).then(res=>{
+      onDone(true);
+    }).catch(err=>{
+      console.error('Apps Script error:',err);
+      onDone(false);
+    });
+
+    // image beacon 備份已移除，避免重複建立日曆事件
+  } else {
+    // 沒有設定 Apps Script，使用 mailto 備案
+    const body=encodeURIComponent(`Student: ${data.name}\nEmail: ${data.email}\nDate: ${data.dateDisp}\nTime: ${data.time}`);
+    const subj=encodeURIComponent(`【Booking】${data.name} - ${data.dateDisp} ${data.time}`);
+    const a=document.createElement('a');a.href=`mailto:${CFG.email}?subject=${subj}&body=${body}`;a.click();
+    onDone(false);
+  }
+}
+function backToCal(){
+  selDate=null;selSlot=null;weekStart=getWeekStart(new Date());
+  hide('step2');show('step1');initMcDate();renderMiniCal();renderWeek();renderMemoPanel();
+  document.getElementById('tsArea').innerHTML=`<div class="no-slot">${I18N[LANG].pickDate}</div>`;
+  window.scrollTo(0,0);
+}
+
+// ================ ADMIN ================
+function openAdminAuth(){document.getElementById('pwInput').value='';document.getElementById('pwErr').classList.add('hidden');show('pwOverlay');document.getElementById('pwInput').focus()}
+function closePw(){hide('pwOverlay')}
+function checkPw(){if(document.getElementById('pwInput').value===CFG.password){hide('pwOverlay');isAdmin=true;renderMemoPanel();openAdmin()}else{document.getElementById('pwErr').classList.remove('hidden')}}
+function openAdmin(){renderAdSlots();renderAdBookings();renderAdSettings();show('adminOverlay')}
+function closeAdmin(){hide('adminOverlay');renderMemoPanel()}
+function showAdTab(i,btn){document.querySelectorAll('.ad-tab').forEach((t,j)=>t.classList.toggle('hidden',j!==i));document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+
+let adSlotMode='weekday'; // 'weekday' or 'weekend'
+function renderAdSlots(){
+  const list=document.getElementById('slotList');list.innerHTML='';
+  const wdLabel=LANG==='zh'?'平日 (週一~週五) 18:00-20:00':'平日 (月〜金) 18:00-20:00';
+  const weLabel=LANG==='zh'?'週末 (週六、日) 10:00-17:00':'週末 (土・日) 10:00-17:00';
+  list.innerHTML=`<div style="display:flex;gap:.5rem;margin-bottom:1rem">
+    <button class="admin-tab ${adSlotMode==='weekday'?'active':''}" onclick="adSlotMode='weekday';renderAdSlots()" style="border-bottom:3px solid ${adSlotMode==='weekday'?'var(--acc)':'transparent'}">${wdLabel}</button>
+    <button class="admin-tab ${adSlotMode==='weekend'?'active':''}" onclick="adSlotMode='weekend';renderAdSlots()" style="border-bottom:3px solid ${adSlotMode==='weekend'?'var(--acc)':'transparent'}">${weLabel}</button>
+  </div>`;
+  const slots=adSlotMode==='weekday'?(CFG.weekdaySlots||[]):(CFG.weekendSlots||[]);
+  if(!slots.length){list.innerHTML+='<div style="text-align:center;color:var(--txt-l);padding:1rem">—</div>';return}
+  slots.forEach((sl,i)=>{
+    const row=document.createElement('div');row.className='slot-row';
+    row.innerHTML=`<span class="slot-time">${sl.s} - ${sl.e}</span><span class="slot-day">${CFG.duration} min</span><button class="slot-del" onclick="delSlot('${adSlotMode}',${i})">✕</button>`;
+    list.appendChild(row);
+  });
+}
+function addSlot(){
+  const s=document.getElementById('newStart').value,e=document.getElementById('newEnd').value;if(!s||!e||s>=e)return;
+  const key=adSlotMode==='weekday'?'weekdaySlots':'weekendSlots';
+  if(!CFG[key])CFG[key]=[];
+  CFG[key].push({s,e});CFG[key].sort((a,b)=>a.s.localeCompare(b.s));saveCfg();renderAdSlots();
+}
+function delSlot(mode,i){const key=mode==='weekday'?'weekdaySlots':'weekendSlots';CFG[key].splice(i,1);saveCfg();renderAdSlots()}
+
+function renderAdBookings(){
+  const list=document.getElementById('bkList');list.innerHTML='';
+  const bks=[...CFG.bookings].reverse();
+  if(!bks.length){list.innerHTML=`<div class="bk-empty">${LANG==='zh'?'尚無預約紀錄':'予約記録はありません'}</div>`;return}
+  bks.forEach(b=>{
+    const tKey=getTeacherMemoKey(b.date,b.start);
+    const tMemo=localStorage.getItem(tKey)||'';
+    const phTea=LANG==='zh'?'教師備注：課程重點、作業、評語…':'授業メモ：課題・評価など…';
+    const tLabel=LANG==='zh'?'✏️ 教師備注':'✏️ 先生メモ';
+    const item=document.createElement('div');item.className='bk-item';
+    item.innerHTML=`
+      <div class="bk-top"><span class="bk-name">${b.name}</span><span class="bk-time">${b.dateDisp} ${b.time}</span></div>
+      <div class="bk-info">${b.email}</div>
+      <div class="memo-section-label" style="margin:.6rem 0 .25rem">${tLabel}</div>
+      <textarea class="memo-textarea" style="min-height:60px;font-size:.82rem" placeholder="${phTea}"
+        oninput="saveTeacherMemo('${b.date}','${b.start}',this.value);renderMemoPanel()"
+      >${tMemo}</textarea>`;
+    list.appendChild(item);
+  });
+}
+
+const DL_ZH=['日','一','二','三','四','五','六'],DL_JA=['日','月','火','水','木','金','土'];
+function renderAdSettings(){
+  document.getElementById('setPass').value=CFG.password;
+  document.getElementById('setEmail').value=CFG.email;
+  document.getElementById('setDur').value=CFG.duration;
+  document.getElementById('setMaxD').value=CFG.maxDays;
+  document.getElementById('setScript').value=CFG.scriptUrl||'';
+  const dc=document.getElementById('dayChecks');dc.innerHTML='';
+  const labels=LANG==='zh'?DL_ZH:DL_JA;
+  for(let i=0;i<7;i++){const d=document.createElement('label');d.className='day-check';d.innerHTML=`<input type="checkbox" value="${i}" ${CFG.availDays.includes(i)?'checked':''}> ${labels[i]}`;dc.appendChild(d)}
+}
+function saveSettings(){
+  CFG.password=document.getElementById('setPass').value||'admin123';
+  CFG.email=document.getElementById('setEmail').value;
+  CFG.duration=parseInt(document.getElementById('setDur').value)||50;
+  CFG.maxDays=parseInt(document.getElementById('setMaxD').value)||30;
+  CFG.scriptUrl=document.getElementById('setScript').value.trim();
+  CFG.availDays=[...document.querySelectorAll('#dayChecks input:checked')].map(c=>parseInt(c.value));
+  saveCfg();
+  const btn=document.querySelector('.btn-save');const orig=btn.textContent;
+  btn.textContent='✓ Saved!';btn.style.background='#c6f6d5';
+  setTimeout(()=>{btn.textContent=orig;btn.style.background=''},1500);
+  renderWeek();
+}
+
+// ================ TEST SCRIPT ================
+function testScript(){
+  const url=document.getElementById('setScript').value.trim();
+  const st=document.getElementById('scriptStatus');
+  if(!url){st.innerHTML='<span style="color:var(--red)">⚠ '+(LANG==='zh'?'請先填入網址':'URLを入力してください')+'</span>';return}
+  st.innerHTML='<span style="color:var(--pri-l)">'+(LANG==='zh'?'測試中...':'テスト中...')+'</span>';
+  fetch(url,{redirect:'follow'})
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status==='ok')st.innerHTML='<span style="color:var(--green)">✅ '+(LANG==='zh'?'連線成功！':'接続成功！')+'</span>';
+      else st.innerHTML='<span style="color:var(--red)">❌ '+(LANG==='zh'?'連線失敗':'接続失敗')+'</span>';
+    })
+    .catch(e=>{st.innerHTML='<span style="color:var(--red)">❌ '+(LANG==='zh'?'無法連線，請確認網址':'接続できません。URLを確認してください')+'</span>'});
+}
+
+// ================ INIT ================
+function init(){
+  try{const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;const off=new Date().getTimezoneOffset();const hrs=Math.abs(Math.floor(off/60));const sign=off<=0?'+':'-';document.getElementById('tzDisp').textContent=`${tz} (GMT${sign}${hrs})`}catch(e){}
+  setLang('ja');
+  if(!tryAutoLogin()){show('step0')}
+}
+init();
+</script>
+</body>
+</html>
