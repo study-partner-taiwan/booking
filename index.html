@@ -544,9 +544,9 @@ function setLang(l){
 const DEF={
   password:'0857',email:'yougiveloveabadname0857@gmail.com',duration:50,maxDays:30,
   availDays:[0,1,2,3,4,5,6],
-  weekdaySlots:[{s:'18:00',e:'18:50'},{s:'19:00',e:'19:50'}],
+  weekdaySlots:[{s:'18:00',e:'18:50'},{s:'19:00',e:'19:50'},{s:'20:00',e:'20:50'}],
   weekendSlots:[{s:'10:00',e:'10:50'},{s:'11:00',e:'11:50'},{s:'12:00',e:'12:50'},{s:'13:00',e:'13:50'},{s:'14:00',e:'14:50'},{s:'15:00',e:'15:50'},{s:'16:00',e:'16:50'}],
-  slots:[{s:'18:00',e:'18:50'},{s:'19:00',e:'19:50'}],
+  slots:[{s:'18:00',e:'18:50'},{s:'19:00',e:'19:50'},{s:'20:00',e:'20:50'}],
   booked:[],bookings:[],
   scriptUrl:'https://script.google.com/macros/s/AKfycbwsTc77dHjqs12nP96iVhT7e-x27VugX3mYuFFJvhdtsSmHiKipaYSM7Sk5SzRPMyov/exec'
 };
@@ -1075,7 +1075,7 @@ function showAdTab(i,btn){document.querySelectorAll('.ad-tab').forEach((t,j)=>t.
 let adSlotMode='weekday'; // 'weekday' or 'weekend'
 function renderAdSlots(){
   const list=document.getElementById('slotList');list.innerHTML='';
-  const wdLabel=LANG==='zh'?'平日 (週一~週五) 18:00-20:00':'平日 (月〜金) 18:00-20:00';
+  const wdLabel=LANG==='zh'?'平日 (週一~週五) 18:00-21:00':'平日 (月〜金) 18:00-21:00';
   const weLabel=LANG==='zh'?'週末 (週六、日) 10:00-17:00':'週末 (土・日) 10:00-17:00';
   list.innerHTML=`<div style="display:flex;gap:.5rem;margin-bottom:1rem">
     <button class="admin-tab ${adSlotMode==='weekday'?'active':''}" onclick="adSlotMode='weekday';renderAdSlots()" style="border-bottom:3px solid ${adSlotMode==='weekday'?'var(--acc)':'transparent'}">${wdLabel}</button>
