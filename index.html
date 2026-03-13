@@ -543,7 +543,7 @@ const I18N={
   ja:{dayNames:['日','月','火','水','木','金','土'],dayFull:['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'],months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],today:'今日',noSlot:'該当なし',pickDate:'日付を選択してください',noAvail:'この日は空きがありません',am:'午前',pm:'午後'}
 };
 let LANG='zh';
-funcx-sh setLang(l){
+function setLang(l){
   LANG=l;
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes(l==='zh'?'中':'日')));
   document.querySelectorAll('[data-zh]').forEach(el=>{el.textContent=el.getAttribute('data-'+l)});
@@ -563,30 +563,30 @@ const DEF={
   scriptUrl:'https://script.google.com/macros/s/AKfycbwI8zYr5ks7YzV0qHSDihBr7zoWhOT0owBBXPzs4wr_fJZiztNdgseWZa8BBMpcpY8C/exec'
 };
 let CFG=loadCfg();
-funcx-sh loadCfg(){try{const s=localStorage.getItem('kou_bk');if(s){const c=JSON.parse(s);return{...DEF,...c}}}catch(e){}return{...DEF}}
-funcx-sh saveCfg(){try{localStorage.setItem('kou_bk',JSON.stringify(CFG))}catch(e){}}
+function loadCfg(){try{const s=localStorage.getItem('kou_bk');if(s){const c=JSON.parse(s);return{...DEF,...c}}}catch(e){}return{...DEF}}
+function saveCfg(){try{localStorage.setItem('kou_bk',JSON.stringify(CFG))}catch(e){}}
 
 // ================ STATE ================
 let weekStart=getWeekStart(new Date());
 let selDate=null,selSlot=null;
 let currentUser={name:'',email:''};
 
-funcx-sh getWeekStart(d){const r=new Date(d);r.setHours(0,0,0,0);const day=r.getDay();r.setDate(r.getDate()-(day===0?6:day-1));return r}
-funcx-sh fmtISO(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
-funcx-sh fmtTime(h,m){const L=I18N[LANG];const hi=parseInt(h);if(hi<12)return`${L.am}${hi}:${m}`;if(hi===12)return`${L.pm}12:${m}`;return`${L.pm}${hi-12}:${m}`}
-funcx-sh show(id){document.getElementById(id).classList.remove('hidden')}
-funcx-sh hide(id){document.getElementById(id).classList.add('hidden')}
+function getWeekStart(d){const r=new Date(d);r.setHours(0,0,0,0);const day=r.getDay();r.setDate(r.getDate()-(day===0?6:day-1));return r}
+function fmtISO(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function fmtTime(h,m){const L=I18N[LANG];const hi=parseInt(h);if(hi<12)return`${L.am}${hi}:${m}`;if(hi===12)return`${L.pm}12:${m}`;return`${L.pm}${hi-12}:${m}`}
+function show(id){document.getElementById(id).classList.remove('hidden')}
+function hide(id){document.getElementById(id).classList.add('hidden')}
 
 // ================ LOGIN ================
 let loginMode='register'; // 'register' or 'login'
 
-funcx-sh toggleLoginMode(ev){
+function toggleLoginMode(ev){
   if(ev)ev.preventDefault();
   loginMode=loginMode==='register'?'login':'register';
   updateLoginUI();
 }
 
-funcx-sh updateLoginUI(){
+function updateLoginUI(){
   const isReg=loginMode==='register';
   document.getElementById('fgName').style.display=isReg?'':'none';
   document.getElementById('fgPassConfirm').style.display=isReg?'':'none';
@@ -621,18 +621,18 @@ funcx-sh updateLoginUI(){
   hideLoginError();
 }
 
-funcx-sh showLoginError(zhMsg,jaMsg){
+function showLoginError(zhMsg,jaMsg){
   const el=document.getElementById('loginError');
   el.setAttribute('data-zh',zhMsg);
   el.setAttribute('data-ja',jaMsg);
   el.textContent=LANG==='zh'?zhMsg:jaMsg;
   el.style.display='block';
 }
-funcx-sh hideLoginError(){document.getElementById('loginError').style.display='none'}
+function hideLoginError(){document.getElementById('loginError').style.display='none'}
 
-funcx-sh getUserPwdKey(email){return'kou_pwd_'+normEmail(email)}
+function getUserPwdKey(email){return'kou_pwd_'+normEmail(email)}
 
-funcx-sh doLogin(e){
+function doLogin(e){
   e.preventDefault();
   hideLoginError();
   const email=document.getElementById('loginEmail').value.trim();
@@ -662,7 +662,7 @@ funcx-sh doLogin(e){
     enterCalendar();
   }
 }
-funcx-sh doLogout(){
+function doLogout(){
   currentUser={name:'',email:''};
   isAdmin=false;
   try{localStorage.removeItem('kou_user')}catch(e){}
@@ -674,7 +674,7 @@ funcx-sh doLogout(){
   document.getElementById('loginPassConfirm').value='';
   window.scrollTo(0,0);
 }
-funcx-sh enterCalendar(){
+function enterCalendar(){
   const name=currentUser.name||'?';
   document.getElementById('dispName').textContent=name;
   document.getElementById('dispName2').textContent=name;
@@ -688,21 +688,21 @@ funcx-sh enterCalendar(){
 
 // ================ MEMO PANEL ================
 let isAdmin=false; // tracks teacher/admin login state
-funcx-sh normEmail(e){return(e||'').trim().toLowerCase()}
-funcx-sh getMemoKey(date,start){return`memo_${normEmail(currentUser.email)}_${date}_${start}`}
-funcx-sh getTeacherMemoKey(date,start){return`teacher_memo_${date}_${start}`}
+function normEmail(e){return(e||'').trim().toLowerCase()}
+function getMemoKey(date,start){return`memo_${normEmail(currentUser.email)}_${date}_${start}`}
+function getTeacherMemoKey(date,start){return`teacher_memo_${date}_${start}`}
 
 // Per-user booking storage (independent of CFG for reliability)
-funcx-sh getUserBkKey(){return`kou_ubk_${normEmail(currentUser.email)}`}
-funcx-sh loadUserBookings(){
+function getUserBkKey(){return`kou_ubk_${normEmail(currentUser.email)}`}
+function loadUserBookings(){
   try{return JSON.parse(localStorage.getItem(getUserBkKey())||'[]')}catch(e){return[]}
 }
-funcx-sh saveUserBooking(bk){
+function saveUserBooking(bk){
   const arr=loadUserBookings();
   arr.push(bk);
   try{localStorage.setItem(getUserBkKey(),JSON.stringify(arr))}catch(e){}
 }
-funcx-sh saveMemo(date,start,text){
+function saveMemo(date,start,text){
   try{localStorage.setItem(getMemoKey(date,start),text)}catch(e){}
   // Update both hint elements (one per memoList)
   ['memoHint_','memoHint2_'].forEach(prefix=>{
@@ -710,7 +710,7 @@ funcx-sh saveMemo(date,start,text){
     if(hint){hint.classList.add('show');setTimeout(()=>hint.classList.remove('show'),1500)}
   });
 }
-funcx-sh saveTeacherMemo(date,start,text){
+function saveTeacherMemo(date,start,text){
   try{localStorage.setItem(getTeacherMemoKey(date,start),text)}catch(e){}
   // Also save to server (Google Sheets)
   const url=CFG.scriptUrl;
@@ -723,7 +723,7 @@ funcx-sh saveTeacherMemo(date,start,text){
     if(hint){hint.classList.add('show');setTimeout(()=>hint.classList.remove('show'),1500)}
   });
 }
-funcx-sh _buildMemoEntries(bookings,idSuffix){
+function _buildMemoEntries(bookings,idSuffix){
   const days=LANG==='zh'?['日','一','二','三','四','五','六']:['日','月','火','水','木','金','土'];
   return bookings.map(b=>{
     const dt=new Date(b.date+'T00:00:00');
@@ -775,7 +775,7 @@ funcx-sh _buildMemoEntries(bookings,idSuffix){
     </div>`;
   }).join('');
 }
-funcx-sh renderMemoPanel(){
+function renderMemoPanel(){
   const list=document.getElementById('memoList');
   const list2=document.getElementById('memoList2');
   if(!list&&!list2)return;
@@ -783,7 +783,7 @@ funcx-sh renderMemoPanel(){
   // Fetch teacher memos from server in background
   fetchServerMemos().then(()=>{_renderMemoPanelInner()}).catch(()=>{_renderMemoPanelInner()});
 }
-funcx-sh _renderMemoPanelInner(){
+function _renderMemoPanelInner(){
   const list=document.getElementById('memoList');
   const list2=document.getElementById('memoList2');
   if(!list&&!list2)return;
@@ -810,7 +810,7 @@ funcx-sh _renderMemoPanelInner(){
 
 // ================ CANCEL BOOKING ================
 let pendingCancel=null;
-funcx-sh openCancelPopup(date,start,end,name,email){
+function openCancelPopup(date,start,end,name,email){
   pendingCancel={date,start,end,name,email};
   const days=LANG==='zh'?['日','一','二','三','四','五','六']:['日','月','火','水','木','金','土'];
   const dt=new Date(date+'T00:00:00');
@@ -826,8 +826,8 @@ funcx-sh openCancelPopup(date,start,end,name,email){
     <div class="r"><span class="l">${lbls.time}</span><span class="v">${start} - ${end}</span></div>`;
   show('cancelPopup');
 }
-funcx-sh closeCancelPopup(){hide('cancelPopup');pendingCancel=null}
-funcx-sh doCancel(){
+function closeCancelPopup(){hide('cancelPopup');pendingCancel=null}
+function doCancel(){
   if(!pendingCancel)return;
   const btn=document.getElementById('cancelConfirmBtn');
   const origTxt=btn.textContent;
@@ -867,7 +867,7 @@ funcx-sh doCancel(){
     onDone(false);
   }
 }
-funcx-sh removeUserBooking(date,start){
+function removeUserBooking(date,start){
   let arr=loadUserBookings();
   arr=arr.filter(b=>!(b.date===date&&b.start===start));
   try{localStorage.setItem(getUserBkKey(),JSON.stringify(arr))}catch(e){}
@@ -875,8 +875,8 @@ funcx-sh removeUserBooking(date,start){
 
 // ================ MINI MONTH CALENDAR ================
 let mcYear,mcMonth;
-funcx-sh initMcDate(){const n=new Date();mcYear=n.getFullYear();mcMonth=n.getMonth()}
-funcx-sh renderMiniCal(){
+function initMcDate(){const n=new Date();mcYear=n.getFullYear();mcMonth=n.getMonth()}
+function renderMiniCal(){
   if(mcYear===undefined)initMcDate();
   const wrap=document.getElementById('miniCalWrap');if(!wrap)return;
   const L=I18N[LANG];
@@ -915,7 +915,7 @@ funcx-sh renderMiniCal(){
   html+=`</tr></tbody></table></div>`;
   wrap.innerHTML=html;
 }
-funcx-sh chgMiniCal(dir){
+function chgMiniCal(dir){
   mcMonth+=dir;
   if(mcMonth>11){mcMonth=0;mcYear++}
   if(mcMonth<0){mcMonth=11;mcYear--}
@@ -926,7 +926,7 @@ funcx-sh chgMiniCal(dir){
   }
   renderMiniCal();
 }
-funcx-sh pickMiniCal(y,m,d){
+function pickMiniCal(y,m,d){
   const dt=new Date(y,m,d);dt.setHours(0,0,0,0);
   selDate=dt;selSlot=null;
   // Sync week view to this date
@@ -934,7 +934,7 @@ funcx-sh pickMiniCal(y,m,d){
   renderMiniCal();renderWeek();renderSlots();
 }
 // Auto-login if remembered
-funcx-sh tryAutoLogin(){
+function tryAutoLogin(){
   try{
     const s=localStorage.getItem('kou_user');
     if(s){
@@ -951,7 +951,7 @@ funcx-sh tryAutoLogin(){
 }
 
 // ================ WEEK ================
-funcx-sh renderWeek(){
+function renderWeek(){
   const grid=document.getElementById('dayGrid');if(!grid)return;
   grid.innerHTML='';
   const L=I18N[LANG];
@@ -978,25 +978,25 @@ funcx-sh renderWeek(){
     cell.appendChild(lb);grid.appendChild(cell);
   }
 }
-funcx-sh chgWeek(dir){const nw=new Date(weekStart);nw.setDate(nw.getDate()+dir*7);if(nw<getWeekStart(new Date()))return;weekStart=nw;renderWeek();renderMiniCal()}
+function chgWeek(dir){const nw=new Date(weekStart);nw.setDate(nw.getDate()+dir*7);if(nw<getWeekStart(new Date()))return;weekStart=nw;renderWeek();renderMiniCal()}
 
 // ================ SLOTS ================
 const busySlotCache={};  // {dateStr: [{start,end}] | null}
 
-funcx-sh pickDate(d){selDate=d;selSlot=null;renderWeek();renderMiniCal();renderSlots()}
-funcx-sh getSlotsForDate(d){
+function pickDate(d){selDate=d;selSlot=null;renderWeek();renderMiniCal();renderSlots()}
+function getSlotsForDate(d){
   const dow=d.getDay();
   if(dow===0||dow===6)return CFG.weekendSlots||CFG.slots;
   return CFG.weekdaySlots||CFG.slots;
 }
 
-funcx-sh toMin(t){const[h,m]=t.split(':').map(Number);return h*60+m}
-funcx-sh isSlotBusy(sl,busySlots){
+function toMin(t){const[h,m]=t.split(':').map(Number);return h*60+m}
+function isSlotBusy(sl,busySlots){
   const ss=toMin(sl.s),se=toMin(sl.e);
   return busySlots.some(b=>{const bs=toMin(b.start),be=toMin(b.end);return ss<be&&se>bs});
 }
 
-async funcx-sh fetchBusySlots(dateStr){
+async function fetchBusySlots(dateStr){
   if(!CFG.scriptUrl)return;
   try{
     const res=await fetch(CFG.scriptUrl+'?checkDate='+dateStr,{mode:'cors',redirecx:'follow'});
@@ -1008,7 +1008,7 @@ async funcx-sh fetchBusySlots(dateStr){
   if(selDate&&fmtISO(selDate)===dateStr)_drawSlots(busySlotCache[dateStr]);
 }
 
-funcx-sh renderSlots(){
+function renderSlots(){
   const area=document.getElementById('tsArea');
   if(!selDate){area.innerHTML=`<div class="no-slot">${I18N[LANG].pickDate}</div>`;return}
   const ds=fmtISO(selDate);
@@ -1020,7 +1020,7 @@ funcx-sh renderSlots(){
   }
 }
 
-funcx-sh _drawSlots(busySlots){
+function _drawSlots(busySlots){
   const area=document.getElementById('tsArea');area.innerHTML='';
   const L=I18N[LANG],now=new Date(),ds=fmtISO(selDate);
   const activeSlots=getSlotsForDate(selDate);
@@ -1075,7 +1075,7 @@ funcx-sh _drawSlots(busySlots){
 }
 
 // ================ CONFIRM POPUP ================
-funcx-sh pickSlot(sl,el){
+function pickSlot(sl,el){
   document.querySelectorAll('.ts').forEach(s=>s.classList.remove('sel'));
   el.classList.add('sel');selSlot=sl;
   const L=I18N[LANG];
@@ -1090,10 +1090,10 @@ funcx-sh pickSlot(sl,el){
   document.getElementById('cfWho').innerHTML=whoTxt;
   show('confirmPopup');
 }
-funcx-sh closeConfirm(){hide('confirmPopup')}
+function closeConfirm(){hide('confirmPopup')}
 
 // ================ BOOK ================
-funcx-sh doBook(){
+function doBook(){
   const cfBtn=document.querySelector('.btn-confirm');
   const origTxt=cfBtn.textContent;
   cfBtn.disabled=true;
@@ -1172,7 +1172,7 @@ funcx-sh doBook(){
     onDone(false);
   }
 }
-funcx-sh backToCal(){
+function backToCal(){
   selDate=null;selSlot=null;weekStart=getWeekStart(new Date());
   hide('step2');show('step1');initMcDate();renderMiniCal();renderWeek();renderMemoPanel();
   document.getElementById('tsArea').innerHTML=`<div class="no-slot">${I18N[LANG].pickDate}</div>`;
@@ -1180,15 +1180,15 @@ funcx-sh backToCal(){
 }
 
 // ================ ADMIN ================
-funcx-sh openAdminAuth(){document.getElementById('pwInput').value='';document.getElementById('pwErr').classList.add('hidden');show('pwOverlay');document.getElementById('pwInput').focus()}
-funcx-sh closePw(){hide('pwOverlay')}
-funcx-sh checkPw(){if(document.getElementById('pwInput').value===CFG.password){hide('pwOverlay');isAdmin=true;renderMemoPanel();openAdmin()}else{document.getElementById('pwErr').classList.remove('hidden')}}
-funcx-sh openAdmin(){renderAdSlots();renderAdBookings();renderAdSettings();show('adminOverlay')}
-funcx-sh closeAdmin(){hide('adminOverlay');renderMemoPanel()}
-funcx-sh showAdTab(i,btn){document.querySelectorAll('.ad-tab').forEach((t,j)=>t.classList.toggle('hidden',j!==i));document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+function openAdminAuth(){document.getElementById('pwInput').value='';document.getElementById('pwErr').classList.add('hidden');show('pwOverlay');document.getElementById('pwInput').focus()}
+function closePw(){hide('pwOverlay')}
+function checkPw(){if(document.getElementById('pwInput').value===CFG.password){hide('pwOverlay');isAdmin=true;renderMemoPanel();openAdmin()}else{document.getElementById('pwErr').classList.remove('hidden')}}
+function openAdmin(){renderAdSlots();renderAdBookings();renderAdSettings();show('adminOverlay')}
+function closeAdmin(){hide('adminOverlay');renderMemoPanel()}
+function showAdTab(i,btn){document.querySelectorAll('.ad-tab').forEach((t,j)=>t.classList.toggle('hidden',j!==i));document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
 
 let adSlotMode='weekday'; // 'weekday' or 'weekend'
-funcx-sh renderAdSlots(){
+function renderAdSlots(){
   const list=document.getElementById('slotList');list.innerHTML='';
   const wdLabel=LANG==='zh'?'平日 (週一~週五) 18:00-21:00':'平日 (月〜金) 18:00-21:00';
   const weLabel=LANG==='zh'?'週末 (週六、日) 10:00-17:00':'週末 (土・日) 10:00-17:00';
@@ -1204,17 +1204,17 @@ funcx-sh renderAdSlots(){
     list.appendChild(row);
   });
 }
-funcx-sh addSlot(){
+function addSlot(){
   const s=document.getElementById('newStart').value,e=document.getElementById('newEnd').value;if(!s||!e||s>=e)return;
   const key=adSlotMode==='weekday'?'weekdaySlots':'weekendSlots';
   if(!CFG[key])CFG[key]=[];
   CFG[key].push({s,e});CFG[key].sort((a,b)=>a.s.localeCompare(b.s));saveCfg();renderAdSlots();
 }
-funcx-sh delSlot(mode,i){const key=mode==='weekday'?'weekdaySlots':'weekendSlots';CFG[key].splice(i,1);saveCfg();renderAdSlots()}
+function delSlot(mode,i){const key=mode==='weekday'?'weekdaySlots':'weekendSlots';CFG[key].splice(i,1);saveCfg();renderAdSlots()}
 
 // Server-side memos cache (loaded from Google Sheets)
 let serverMemos={};
-funcx-sh fetchServerMemos(){
+function fetchServerMemos(){
   const url=CFG.scriptUrl;
   if(!url)return Promise.resolve({});
   return fetch(url+'?acx-sh=getMemos',{redirecx:'follow'})
@@ -1223,7 +1223,7 @@ funcx-sh fetchServerMemos(){
     .catch(e=>({}));
 }
 
-funcx-sh renderAdBookings(){
+function renderAdBookings(){
   const list=document.getElementById('bkList');
   list.innerHTML=`<div class="bk-empty">${LANG==='zh'?'載入中...':'読み込み中...'}</div>`;
   const url=CFG.scriptUrl;
@@ -1262,7 +1262,7 @@ funcx-sh renderAdBookings(){
 }
 
 const DL_ZH=['日','一','二','三','四','五','六'],DL_JA=['日','月','火','水','木','金','土'];
-funcx-sh renderAdSettings(){
+function renderAdSettings(){
   document.getElementById('setPass').value=CFG.password;
   document.getElementById('setEmail').value=CFG.email;
   document.getElementById('setDur').value=CFG.duration;
@@ -1272,7 +1272,7 @@ funcx-sh renderAdSettings(){
   const labels=LANG==='zh'?DL_ZH:DL_JA;
   for(let i=0;i<7;i++){const d=document.createElement('label');d.className='day-check';d.innerHTML=`<input type="checkbox" value="${i}" ${CFG.availDays.includes(i)?'checked':''}> ${labels[i]}`;dc.appendChild(d)}
 }
-funcx-sh saveSettings(){
+function saveSettings(){
   CFG.password=document.getElementById('setPass').value||'admin123';
   CFG.email=document.getElementById('setEmail').value;
   CFG.duration=parseInt(document.getElementById('setDur').value)||50;
@@ -1287,7 +1287,7 @@ funcx-sh saveSettings(){
 }
 
 // ================ TEST SCRIPT ================
-funcx-sh testScript(){
+function testScript(){
   const url=document.getElementById('setScript').value.trim();
   const st=document.getElementById('scriptStatus');
   if(!url){st.innerHTML='<span style="color:var(--red)">⚠ '+(LANG==='zh'?'請先填入網址':'URLを入力してください')+'</span>';return}
@@ -1302,7 +1302,7 @@ funcx-sh testScript(){
 }
 
 // ================ INIT ================
-funcx-sh init(){
+function init(){
   try{const tz=Intl.DateTimeFormat().resolvedOpx-shs().timeZone;const off=new Date().getTimezoneOffset();const hrs=Math.abs(Math.floor(off/60));const sign=off<=0?'+':'-';document.getElementById('tzDisp').textContent=`${tz} (GMT${sign}${hrs})`}catch(e){}
   setLang('ja');
   updateLoginUI();
