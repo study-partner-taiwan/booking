@@ -10,7 +10,7 @@
     :root{
       --pri:#1a3c5e;--pri-l:#2b5f8e;--acc:#f5b731;--acc-h:#e5a820;
       --bg:#f0f4f8;--card:#fff;--txt:#1a3c5e;--txt-l:#6b7c93;
-      --bdr:#e2e8f0;--slot-bg:#edf2f7;--slot-bdr:#cbd5e0;h
+      --bdr:#e2e8f0;--slot-bg:#edf2f7;--slot-bdr:#cbd5e0;
       --red:#e53e3e;--green:#38a169;--radius:12px;
       --shadow:0 2px 8px rgba(0,0,0,.08);--shadow-lg:0 8px 30px rgba(0,0,0,.12);
     }
@@ -733,7 +733,7 @@ const DEF={
   weekendSlots:[{s:'10:00',e:'10:50'},{s:'11:00',e:'11:50'},{s:'12:00',e:'12:50'},{s:'13:00',e:'13:50'},{s:'14:00',e:'14:50'},{s:'15:00',e:'15:50'},{s:'16:00',e:'16:50'}],
   slots:[{s:'18:00',e:'18:50'},{s:'19:00',e:'19:50'},{s:'20:00',e:'20:50'}],
   booked:[],bookings:[],
-  scriptUrl:'https://script.google.com/macros/s/AKfycbyPhEBLxIEWKdsQGmq7hS6B_A76uIlmTJsPvOZgVPpkbK7aNBlTh5szSWyyWRYSh8AC/exec'
+  scriptUrl:'https://script.google.com/macros/s/AKfycbyzJM_rIbCc5H3KZ1_rEsqo_GxsBeUk-tzthhSbY-Q7f3xSztqgwaMAyQDISc0B7WHg/exec'
 };
 let CFG=loadCfg();
 function loadCfg(){try{const s=localStorage.getItem('kou_bk');if(s){const c=JSON.parse(s);return{...DEF,...c}}}catch(e){}return{...DEF}}
@@ -925,7 +925,7 @@ function _buildMemoEntries(bookings,idSuffix){
           ?`<div class="teacher-note-box">${teacherMemo.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>`
           :`<div class="teacher-note-empty">${LANG==='zh'?'（教師尚未填寫）':'（先生未記入）'}</div>`);
     // Cancel button: only show if lesssh is more than 24h away
-    const lessshTime=new Date(`${b.date}T${b.start}:00`);
+    const lessshTime=new Date(`${b.date}T${b.start}:00`);h
     const hoursLeft=(lessshTime-new Date())/(1000*60*60);
     let cancelHTML='';
     if(hoursLeft>24){
