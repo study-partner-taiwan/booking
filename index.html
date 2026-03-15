@@ -1047,14 +1047,15 @@ function doCancel(){
   if(CFG.scriptUrl){
     fetch(CFG.scriptUrl,{
       method:'POST',
-      headers:{'Content-Type':'text/plain'},
       body:JSON.stringify({
         action:'cancel',
         date:c.date,startTime:c.start,endTime:c.end,
         studentName:c.name,studentEmail:c.email
       }),
-      mode:'no-cors'
-    }).then(()=>onDone(true)).catch(()=>onDone(false));
+      redirect:'follow'
+    }).then(r=>r.json()).then(res=>{
+      onDone(res && res.status==='ok');
+    }).catch(()=>onDone(false));
   }else{
     onDone(false);
   }
@@ -1341,15 +1342,10 @@ function doBook(){
   if(CFG.scriptUrl){
     fetch(CFG.scriptUrl,{
       method:'POST',
-      headers:{'Content-Type':'text/plain'},
       body:JSON.stringify(apiPayload),
-      mode:'no-cors'
-    }).then(()=>{
-      // no-cors 模式無法讀取回應，但請求已送出
-      // 嘗試用 GET redirect 方式確認
-      return fetch(CFG.scriptUrl+'?check=1',{mode:'cors',redirect:'follow'}).then(r=>r.json()).catch(()=>null);
-    }).then(res=>{
-      onDone(true);
+      redirect:'follow'
+    }).then(r=>r.json()).then(res=>{
+      onDone(res && res.gcal);
     }).catch(err=>{
       console.error('Apps Script error:',err);
       onDone(false);
@@ -1518,10 +1514,10 @@ function saveComment(date,start,comment){
   try{localStorage.setItem(key,JSON.stringify(arr))}catch(e){}
   // Also sync to server
   if(CFG.scriptUrl){
-    fetch(CFG.scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({
+    fetch(CFG.scriptUrl,{method:'POST',body:JSON.stringify({
       action:'saveComment',date,startTime:start,
       author:comment.author,text:comment.text,time:comment.time,role:comment.role
-    }),mode:'no-cors'}).catch(()=>{});
+    }),redirect:'follow'}).catch(()=>{});
   }
   return arr;
 }
