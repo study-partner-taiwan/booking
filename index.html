@@ -1625,8 +1625,6 @@ function _renderAdmBookings(){
     const cardId=`admBk_${idx}`;
     const expandId=`admBkExp_${idx}`;
 
-    // Load comments for this booking
-    const comments=loadComments(b.date,b.start);
     const teacherMemo=serverMemos[b.date+'_'+b.start]||localStorage.getItem(getTeacherMemoKey(b.date,b.start))||'';
 
     const card=document.createElement('div');
@@ -1636,33 +1634,9 @@ function _renderAdmBookings(){
     card.dataset.status=statusCls;
     card.id=cardId;
 
-    const cLabel=LANG==='zh'?'💬 留言記錄':'💬 コメント';
-    const cPh=LANG==='zh'?'輸入留言...':'コメントを入力...';
-    const cSend=LANG==='zh'?'送出':'送信';
     const tLabel=LANG==='zh'?'✏️ 教師備注':'✏️ 先生メモ';
     const tPh=LANG==='zh'?'課程重點、作業、評語…':'授業メモ：課題・評価など…';
     const savedTxt=LANG==='zh'?'已儲存 ✓':'保存済み ✓';
-
-    let commentsHTML='';
-    if(comments.length){
-      commentsHTML=comments.map(c=>{
-        const avatarCls=c.role==='admin'?'admin':'student';
-        const avatarTxt=c.role==='admin'?'K':(c.author||'?')[0].toUpperCase();
-        const timeStr=c.time?new Date(c.time).toLocaleString(LANG==='zh'?'zh-TW':'ja-JP',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
-        return`<div class="adm-comment-item">
-          <div class="adm-comment-avatar ${avatarCls}">${avatarTxt}</div>
-          <div class="adm-comment-body">
-            <div class="adm-comment-meta">
-              <span class="adm-comment-author">${(c.author||'').replace(/</g,'&lt;')}</span>
-              <span class="adm-comment-time">${timeStr}</span>
-            </div>
-            <div class="adm-comment-text">${(c.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>
-          </div>
-        </div>`;
-      }).join('');
-    }else{
-      commentsHTML=`<div style="text-align:center;color:var(--txt-l);font-size:.82rem;padding:.5rem 0">${LANG==='zh'?'尚無留言':'コメントなし'}</div>`;
-    }
 
     card.innerHTML=`
       <div class="adm-bk-header" onclick="toggleAdmExpand('${expandId}',this)">
@@ -1683,21 +1657,11 @@ function _renderAdmBookings(){
         <!-- Teacher Memo -->
         <div class="adm-comment-section">
           <div class="adm-comment-label">${tLabel}</div>
-          <textarea class="memo-textarea" style="min-height:60px;font-size:.84rem;background:#fffde7;border-color:#f6e05e" placeholder="${tPh}"
-            oninput="saveTeacherMemo('${b.date}','${b.start}',this.value)">${teacherMemo}</textarea>
-          <div class="memo-save-hint" id="admTHint_${idx}">${savedTxt}</div>
-        </div>
-        <!-- Comments -->
-        <div class="adm-comment-section" style="margin-top:.8rem">
-          <div class="adm-comment-label">${cLabel} <span style="font-weight:400;color:var(--txt-l)">(${comments.length})</span></div>
-          <div class="adm-comment-list" id="admCmtList_${idx}">${commentsHTML}</div>
-          <div class="adm-comment-input">
-            <textarea id="admCmtInput_${idx}" placeholder="${cPh}" rows="1"
-              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();admSendComment(${idx},'${b.date}','${b.start}','${(b.name||'').replace(/'/g,"\\'")}')}"
-            ></textarea>
-            <button class="adm-comment-send" onclick="admSendComment(${idx},'${b.date}','${b.start}','${(b.name||'').replace(/'/g,"\\'")}')">
-              ${cSend}
-            </button>
+          <textarea class="memo-textarea" id="admMemoTxt_${idx}" style="min-height:60px;font-size:.84rem;background:#fffde7;border-color:#f6e05e" placeholder="${tPh}"
+            oninput="clearTimeout(this._at);this._at=setTimeout(()=>saveTeacherMemo('${b.date}','${b.start}',this.value),800)">${teacherMemo}</textarea>
+          <div style="display:flex;align-items:center;gap:.6rem;margin-top:.4rem">
+            <button class="adm-comment-send" onclick="saveTeacherMemo('${b.date}','${b.start}',document.getElementById('admMemoTxt_${idx}').value)">${LANG==='zh'?'送出':'送信'}</button>
+            <div class="memo-save-hint" id="admTHint_${idx}">${savedTxt}</div>
           </div>
         </div>
       </div>`;
