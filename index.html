@@ -1009,20 +1009,36 @@ function renderMemoPanel(){
   const list2=document.getElementById('memoList2');
   if(!list&&!list2)return;
 
-  // Fetch teacher memos from server in background
-  fetchServerMemos().then(()=>{_renderMemoPanelInner()}).catch(()=>{_renderMemoPanelInner()});
+  // Fetch bookings + memos from server, then render
+  const url=CFG.scriptUrl;
+  if(url&&currentUser.email){
+    Promise.all([
+      fetch(url+'?action=getBookings',{redirect:'follow'}).then(r=>r.json()).catch(()=>null),
+      fetchServerMemos()
+    ]).then(([bkData])=>{
+      if(bkData&&bkData.status==='ok'){
+        CFG.bookings=bkData.bookings.map(b=>({name:b.name,email:b.email,date:b.date,start:b.start,end:b.end,dateDisp:b.dateDisp,time:b.start+' - '+b.end,gcal:b.gcal}));
+        const ce=normEmail(currentUser.email);
+        const myBk=CFG.bookings.filter(b=>normEmail(b.email)===ce);
+        try{localStorage.setItem(getUserBkKey(),JSON.stringify(myBk))}catch(x){}
+      }
+      _renderMemoPanelInner();
+    }).catch(()=>{_renderMemoPanelInner()});
+  }else{
+    fetchServerMemos().then(()=>{_renderMemoPanelInner()}).catch(()=>{_renderMemoPanelInner()});
+  }
 }
 function _renderMemoPanelInner(){
   const list=document.getElementById('memoList');
   const list2=document.getElementById('memoList2');
   if(!list&&!list2)return;
 
-  // Primary source: per-user localStorage key (most reliable)
-  let userBk=loadUserBookings();
-  // Fallback: CFG.bookings with case-insensitive email match
+  // Primary source: server bookings (CFG.bookings) filtered by current user email
+  const ce=normEmail(currentUser.email);
+  let userBk=(CFG.bookings||[]).filter(b=>normEmail(b.email)===ce);
+  // Fallback: per-user localStorage key (offline support)
   if(!userBk.length){
-    const ce=normEmail(currentUser.email);
-    userBk=(CFG.bookings||[]).filter(b=>normEmail(b.email)===ce);
+    userBk=loadUserBookings();
   }
   // Sort by date ascending
   userBk=userBk.filter(b=>b.date&&b.start&&b.end)
@@ -1036,7 +1052,7 @@ function _renderMemoPanelInner(){
   if(list)  list.innerHTML =userBk.length?_buildMemoEntries(userBk,'') :emptyHTML;
   if(list2) list2.innerHTML=userBk.length?_buildMemoEntries(userBk,'2'):emptyHTML;
 
-  // Sync any localStorage student memos to server (one-time migration for old memos)
+  // Sync any localStorage student memos to server
   if(currentUser.email && CFG.scriptUrl && userBk.length){
     userBk.forEach(b=>{
       const localMemo=localStorage.getItem(getMemoKey(b.date,b.start));
