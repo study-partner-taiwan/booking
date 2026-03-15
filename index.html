@@ -811,9 +811,7 @@ function doLogin(e){
   const email=document.getElementById('loginEmail').value.trim();
   const pass=document.getElementById('loginPass').value;
   if(!email||!pass)return;
-
-  const pwdKey=getUserPwdKey(email);
-  const stored=localStorage.getItem(pwdKey);
+  const ne=normEmail(email);
 
   if(loginMode==='register'){
     const name=document.getElementById('loginName').value.trim();
@@ -821,19 +819,71 @@ function doLogin(e){
     if(!name){showLoginError('請輸入姓名','氏名を入力してください');return}
     if(pass.length<4){showLoginError('密碼至少需要4位','パスワードは4文字以上必要です');return}
     if(pass!==passConfirm){showLoginError('兩次密碼不一致','パスワードが一致しません');return}
-    if(stored){showLoginError('此信箱已註冊，請直接登入','このメールアドレスは登録済みです。ログインしてください');loginMode='login';updateLoginUI();return}
-    try{localStorage.setItem(pwdKey,JSON.stringify({name,pass}))}catch(e){}
-    currentUser={name,email};
-    try{localStorage.setItem('kou_user',JSON.stringify(currentUser))}catch(e){}
-    enterCalendar();
+    if(CFG.scriptUrl){
+      showLoginError('註冊中…','登録中…');
+      fetch(CFG.scriptUrl,{method:'POST',redirect:'follow',body:JSON.stringify({
+        action:'register',email:ne,name,pass
+      })}).then(r=>r.json()).then(res=>{
+        hideLoginError();
+        if(res.status==='ok'){
+          try{localStorage.setItem(getUserPwdKey(ne),JSON.stringify({name,pass}))}catch(x){}
+          currentUser={name,email:ne};
+          try{localStorage.setItem('kou_user',JSON.stringify(currentUser))}catch(x){}
+          enterCalendar();
+        }else if(res.message==='already_registered'){
+          showLoginError('此信箱已註冊，請直接登入','このメールアドレスは登録済みです。ログインしてください');
+          loginMode='login';updateLoginUI();
+        }else{
+          _doLocalRegister(ne,name,pass);
+        }
+      }).catch(()=>{hideLoginError();_doLocalRegister(ne,name,pass)});
+    }else{
+      _doLocalRegister(ne,name,pass);
+    }
   }else{
-    if(!stored){showLoginError('此信箱尚未註冊，請先註冊','このメールアドレスは未登録です。先に登録してください');loginMode='register';updateLoginUI();return}
-    const data=JSON.parse(stored);
-    if(data.pass!==pass){showLoginError('密碼錯誤','パスワードが間違っています');return}
-    currentUser={name:data.name,email};
-    try{localStorage.setItem('kou_user',JSON.stringify(currentUser))}catch(e){}
-    enterCalendar();
+    if(CFG.scriptUrl){
+      showLoginError('登入中…','ログイン中…');
+      fetch(CFG.scriptUrl,{method:'POST',redirect:'follow',body:JSON.stringify({
+        action:'login',email:ne,pass
+      })}).then(r=>r.json()).then(res=>{
+        hideLoginError();
+        if(res.status==='ok'){
+          try{localStorage.setItem(getUserPwdKey(ne),JSON.stringify({name:res.name,pass}))}catch(x){}
+          currentUser={name:res.name,email:ne};
+          try{localStorage.setItem('kou_user',JSON.stringify(currentUser))}catch(x){}
+          enterCalendar();
+        }else if(res.message==='not_found'){
+          showLoginError('此信箱尚未註冊，請先註冊','このメールアドレスは未登録です。先に登録してください');
+          loginMode='register';updateLoginUI();
+        }else if(res.message==='wrong_password'){
+          showLoginError('密碼錯誤','パスワードが間違っています');
+        }else{
+          _doLocalLogin(ne,pass);
+        }
+      }).catch(()=>{hideLoginError();_doLocalLogin(ne,pass)});
+    }else{
+      _doLocalLogin(ne,pass);
+    }
   }
+}
+function _doLocalRegister(ne,name,pass){
+  const pwdKey=getUserPwdKey(ne);
+  if(localStorage.getItem(pwdKey)){showLoginError('此信箱已註冊，請直接登入','このメールアドレスは登録済みです。ログインしてください');loginMode='login';updateLoginUI();return}
+  try{localStorage.setItem(pwdKey,JSON.stringify({name,pass}))}catch(x){}
+  currentUser={name,email:ne};
+  try{localStorage.setItem('kou_user',JSON.stringify(currentUser))}catch(x){}
+  enterCalendar();
+}
+function _doLocalLogin(ne,pass){
+  const pwdKey=getUserPwdKey(ne);
+  const stored=localStorage.getItem(pwdKey);
+  if(!stored){showLoginError('此信箱尚未註冊，請先註冊','このメールアドレスは未登録です。先に登録してください');loginMode='register';updateLoginUI();return}
+  const data=JSON.parse(stored);
+  if(data.pass!==pass){showLoginError('密碼錯誤','パスワードが間違っています');return}
+  currentUser={name:data.name,email:ne};
+  try{localStorage.setItem('kou_user',JSON.stringify(currentUser))}catch(x){}
+  if(CFG.scriptUrl){fetch(CFG.scriptUrl,{method:'POST',redirect:'follow',body:JSON.stringify({action:'register',email:ne,name:data.name,pass})}).catch(()=>{})}
+  enterCalendar();
 }
 function doLogout(){
   currentUser={name:'',email:''};
