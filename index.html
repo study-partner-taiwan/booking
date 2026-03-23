@@ -712,9 +712,53 @@
 
 <div class="footer" id="mainFooter">Â© 2026 Kou <span data-zh="ç·ä¸å®¶æé ç´ç³»çµ±" data-ja="ãªã³ã©ã¤ã³åå¥æå°äºç´ã·ã¹ãã "></span></div>
 
+
+<!-- Parent View Entry Button -->
+<div id="parentEntryBtn" style="position:fixed;bottom:20px;right:20px;z-index:900">
+  <button onclick="show('parentLogin')" style="padding:10px 20px;background:var(--pri);color:#fff;border:none;border-radius:var(--radius);font-size:.9rem;box-shadow:var(--shadow);cursor:pointer" data-zh="家長查看" data-ja="保護者ページ">家長查看</button>
+</div>
+
+<!-- Parent Login Panel -->
+<div id="parentLogin" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center">
+  <div style="background:var(--card);max-width:400px;width:90%;margin:auto;padding:2rem;border-radius:var(--radius);box-shadow:var(--shadow-lg)">
+    <h2 data-zh="家長查看" data-ja="保護者ページ">家長查看</h2>
+    <p data-zh="請輸入學生 Email 與密碼" data-ja="生徒のメールアドレスとパスワードを入力してください">請輸入學生 Email 與密碼</p>
+    <label data-zh="學生 Email" data-ja="生徒メール">學生 Email</label>
+    <input type="email" id="parentEmail" style="width:100%;padding:8px;margin:4px 0 12px;border:1.5px solid var(--bdr);border-radius:var(--radius);font-size:1rem">
+    <label data-zh="密碼" data-ja="パスワード">密碼</label>
+    <input type="password" id="parentPass" style="width:100%;padding:8px;margin:4px 0 12px;border:1.5px solid var(--bdr);border-radius:var(--radius);font-size:1rem">
+    <p id="parentErr" class="hidden" style="color:var(--red);margin:8px 0"></p>
+    <button onclick="doParentLogin()" style="width:100%;padding:10px;margin-top:8px;background:var(--pri);color:#fff;border:none;border-radius:var(--radius);font-size:1rem;cursor:pointer" data-zh="登入查看" data-ja="ログインして確認">登入查看</button>
+    <button onclick="hide('parentLogin')" style="width:100%;padding:10px;margin-top:8px;background:var(--slot-bg);color:var(--txt);border:none;border-radius:var(--radius);font-size:1rem;cursor:pointer" data-zh="返回" data-ja="戻る">返回</button>
+  </div>
+</div>
+
+<!-- Parent Dashboard Panel -->
+<div id="parentDashboard" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center;overflow-y:auto">
+  <div style="background:var(--card);max-width:500px;width:90%;margin:2rem auto;padding:2rem;border-radius:var(--radius);box-shadow:var(--shadow-lg)">
+    <h2 id="pdTitle"></h2>
+    <div style="display:flex;gap:.8rem;margin:1rem 0;flex-wrap:wrap">
+      <div style="flex:1;min-width:80px;text-align:center;padding:.8rem;background:var(--slot-bg);border-radius:var(--radius)">
+        <div style="font-size:1.8rem;font-weight:700;color:var(--pri)" id="pdTotal">0</div>
+        <div style="font-size:.8rem;color:var(--txt-l)" data-zh="本月預約" data-ja="今月の予約">本月預約</div>
+      </div>
+      <div style="flex:1;min-width:80px;text-align:center;padding:.8rem;background:var(--slot-bg);border-radius:var(--radius)">
+        <div style="font-size:1.8rem;font-weight:700;color:var(--green)" id="pdDone">0</div>
+        <div style="font-size:.8rem;color:var(--txt-l)" data-zh="已完成" data-ja="完了">已完成</div>
+      </div>
+      <div style="flex:1;min-width:80px;text-align:center;padding:.8rem;background:var(--slot-bg);border-radius:var(--radius)">
+        <div style="font-size:1.8rem;font-weight:700;color:var(--acc)" id="pdUpcoming">0</div>
+        <div style="font-size:.8rem;color:var(--txt-l)" data-zh="即將到來" data-ja="予定">即將到來</div>
+      </div>
+    </div>
+    <div id="pdList" style="margin-top:1rem"></div>
+    <button onclick="hide('parentDashboard');show('parentLogin')" style="width:100%;padding:10px;margin-top:1.5rem;background:var(--slot-bg);color:var(--txt);border:none;border-radius:var(--radius);font-size:1rem;cursor:pointer" data-zh="登出" data-ja="ログアウト">登出</button>
+  </div>
+</div>
+
 <script>
 // ================ VERSION CHECK ================
-const APP_VERSION='20260323a';
+const APP_VERSION='20260323b';
 (function(){try{const v=localStorage.getItem('kou_app_version');if(v&&v!==APP_VERSION){localStorage.removeItem('kou_app_version');location.reload(true);return}localStorage.setItem('kou_app_version',APP_VERSION)}catch(e){}})();
 // ================ I18N ================
 const I18N={
@@ -1931,6 +1975,95 @@ checkPw=function(){
 };
 
 init();
+
+
+// ========== Parent View ==========
+
+function doParentLogin() {
+  const email = document.getElementById('parentEmail').value.trim();
+  const pass = document.getElementById('parentPass').value.trim();
+  const errEl = document.getElementById('parentErr');
+  errEl.classList.add('hidden');
+  if (!email || !pass) {
+    errEl.textContent = LANG === 'zh' ? '請填寫所有欄位' : 'すべての項目を入力してください';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  fetch(CFG.scriptUrl, {
+    method: 'POST', redirect: 'follow',
+    body: JSON.stringify({ action: 'parentView', email: email, password: pass })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.status === 'ok') {
+      hide('parentLogin');
+      renderParentDashboard(d);
+    } else {
+      errEl.textContent = LANG === 'zh' ? '密碼錯誤' : 'パスワードが正しくありません';
+      errEl.classList.remove('hidden');
+    }
+  })
+  .catch(function(){
+    errEl.textContent = LANG === 'zh' ? '連線失敗' : '接続エラー';
+    errEl.classList.remove('hidden');
+  });
+}
+
+function renderParentDashboard(data) {
+  var title = document.getElementById('pdTitle');
+  title.textContent = LANG === 'zh'
+    ? data.studentName + ' 的課程紀錄'
+    : data.studentName + ' のレッスン記録';
+  var bookings = data.bookings || [];
+  var now = new Date();
+  var thisMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  var monthBookings = bookings.filter(function(b){ return b.date.startsWith(thisMonth); });
+  var completed = monthBookings.filter(function(b){ return b.status === 'completed'; }).length;
+  var upcoming = monthBookings.filter(function(b){ return b.status === 'upcoming'; }).length;
+  document.getElementById('pdTotal').textContent = monthBookings.length;
+  document.getElementById('pdDone').textContent = completed;
+  document.getElementById('pdUpcoming').textContent = upcoming;
+  var list = document.getElementById('pdList');
+  list.innerHTML = '';
+  if (bookings.length === 0) {
+    list.innerHTML = '<p style="text-align:center;color:var(--txt-l)">' +
+      (LANG === 'zh' ? '目前沒有預約紀錄' : '予約記録がありません') + '</p>';
+    show('parentDashboard');
+    return;
+  }
+  var groups = [
+    { key:'upcoming', icon:'📅', label: LANG==='zh'?'即將到來':'予定', color:'var(--acc)' },
+    { key:'completed', icon:'✅', label: LANG==='zh'?'已完成':'完了', color:'var(--green)' },
+    { key:'noshow', icon:'⚠️', label: LANG==='zh'?'未到':'欠席', color:'var(--red)' }
+  ];
+  var dayNamesZh = ['日','一','二','三','四','五','六'];
+  var dayNamesJa = ['日','月','火','水','木','金','土'];
+  groups.forEach(function(g){
+    var items = bookings.filter(function(b){ return b.status === g.key; });
+    if (items.length === 0) return;
+    list.innerHTML += '<h3 style="margin:1rem 0 .5rem;color:'+g.color+'">'+g.icon+' '+g.label+'</h3>';
+    items.forEach(function(b){
+      var d = new Date(b.date + 'T00:00:00');
+      var dayStr = (LANG==='zh' ? dayNamesZh : dayNamesJa)[d.getDay()];
+      list.innerHTML += '<div style="padding:.6rem .8rem;margin-bottom:.4rem;background:var(--slot-bg);border-radius:var(--radius);display:flex;justify-content:space-between;align-items:center">' +
+        '<span>'+b.date+' ('+dayStr+')</span>' +
+        '<span style="color:var(--txt-l)">'+b.startTime+'–'+b.endTime+'</span></div>';
+    });
+  });
+  show('parentDashboard');
+}
+
+function toggleNoshow(email, date, startTime, noshow) {
+  fetch(CFG.scriptUrl, {
+    method: 'POST', redirect: 'follow',
+    body: JSON.stringify({ action:'markNoshow', email:email, date:date, startTime:startTime, noshow:noshow })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.status === 'ok' && typeof admRenderBookings === 'function') admRenderBookings();
+  });
+}
+
 </script>
 </body>
 </html>
