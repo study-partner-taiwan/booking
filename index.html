@@ -655,7 +655,8 @@
         <button class="adm-topbar-btn" style="color:var(--pri);border-color:var(--bdr)" onclick="loadAdmBookings()" data-zh="🔄 重新整理" data-ja="🔄 更新"></button>
       </div>
       <!-- Booking List -->
-      <div id="admBookingList"></div>
+      <div id="admMonthNav" style="display:flex;align-items:center;justify-content:center;gap:12px;margin:12px 0;flex-wrap:wrap;"><button onclick="changeAdmMonth(-1)" style="background:#4a90d9;color:#fff;border:none;border-radius:6px;padding:6px 14px;cursor:pointer;font-size:15px;">&#9664;</button><span id="admMonthLabel" style="font-size:16px;font-weight:bold;min-width:120px;text-align:center;">---</span><button onclick="changeAdmMonth(1)" style="background:#4a90d9;color:#fff;border:none;border-radius:6px;padding:6px 14px;cursor:pointer;font-size:15px;">&#9654;</button><button onclick="changeAdmMonth(0)" style="background:#e0e0e0;color:#333;border:none;border-radius:6px;padding:6px 14px;cursor:pointer;font-size:13px;">All</button></div>
+        <div id="admBookingList"></div>
     </div>
 
     <!-- Page 1: Slot Management (reuses existing admin slot panel) -->
@@ -758,7 +759,7 @@
 
 <script>
 // ================ VERSION CHECK ================
-const APP_VERSION='20260326a';
+const APP_VERSION='20260327a';
 (function(){try{const v=localStorage.getItem('kou_app_version');if(v&&v!==APP_VERSION){localStorage.removeItem('kou_app_version');location.reload(true);return}localStorage.setItem('kou_app_version',APP_VERSION)}catch(e){}})();
 // ================ I18N ================
 const I18N={
@@ -1682,6 +1683,7 @@ function showAdmPage(idx,btn){
 const _origCheckPw=checkPw;
 
 function loadAdmBookings(){
+    if(typeof admSelectedMonth==="undefined")initAdmMonth();
   const list=document.getElementById('admBookingList');
   const stats=document.getElementById('admStats');
   if(!list)return;
@@ -1720,6 +1722,47 @@ function loadAdmBookings(){
   });
 }
 
+
+// === Month Navigation ===
+var admSelectedMonth = null;
+
+function initAdmMonth() {
+  var now = new Date();
+  admSelectedMonth = {year: now.getFullYear(), month: now.getMonth()};
+  updateAdmMonthLabel();
+}
+
+function updateAdmMonthLabel() {
+  var el = document.getElementById("admMonthLabel");
+  if (!el) return;
+  if (!admSelectedMonth) {
+    el.textContent = "All";
+  } else {
+    var y = admSelectedMonth.year;
+    var m = admSelectedMonth.month + 1;
+    el.textContent = y + "/" + m;
+  }
+}
+
+function changeAdmMonth(dir) {
+  if (dir === 0) {
+    admSelectedMonth = null;
+    updateAdmMonthLabel();
+    _renderAdmBookings();
+    return;
+  }
+  if (!admSelectedMonth) {
+    var now = new Date();
+    admSelectedMonth = {year: now.getFullYear(), month: now.getMonth()};
+  }
+  admSelectedMonth.month += dir;
+  if (admSelectedMonth.month > 11) { admSelectedMonth.month = 0; admSelectedMonth.year++; }
+  if (admSelectedMonth.month < 0) { admSelectedMonth.month = 11; admSelectedMonth.year--; }
+  updateAdmMonthLabel();
+  _renderAdmBookings();
+}
+// === End Month Navigation ===
+
 function _renderAdmBookings(){
   const list=document.getElementById('admBookingList');
   const stats=document.getElementById('admStats');
@@ -1727,7 +1770,7 @@ function _renderAdmBookings(){
 
   const now=new Date();
   const todayStr=fmtISO(now);
-  const bks=admBookingsData.slice().sort((a,b)=>{
+  const bks=admBookingsData.slice().filter(function(b){if(!admSelectedMonth)return true;var d=new Date(b.date);return d.getFullYear()===admSelectedMonth.year&&d.getMonth()===admSelectedMonth.month;}).sort((a,b)=>{
     const da=a.date||'',db=b.date||'';
     if(da!==db)return da>db?-1:1;
     return(a.start||'')>(b.start||'')?-1:1;
