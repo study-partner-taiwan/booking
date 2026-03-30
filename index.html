@@ -1807,7 +1807,7 @@ function _renderAdmBookings(){
   const total=bks.length;
   const upcoming=bks.filter(b=>b.date>todayStr||(b.date===todayStr&&b.start>now.getHours()+':'+String(now.getMinutes()).padStart(2,'0'))).length;
   const todayCount=bks.filter(b=>b.date===todayStr).length;
-  const uniqueStudents=[...new Set(bks.map(b=>(b.email||'').toLowerCase()))].length;
+  const uniqueStudents=[...new Set(bks.map(b=>(b.name||b.email||'').toLowerCase()))].length;
 
   const sL=LANG==='zh'
     ?{total:'總預約數',upcoming:'即將到來',today:'今日課程',students:'學生人數'}
