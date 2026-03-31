@@ -1175,8 +1175,8 @@ function doCancel(){
   hide('cancelPopup');
   btn.disabled=false;btn.textContent=origTxt;
   pendingCancel=null;
-  // Render cards directly (NOT renderMemoPanel which re-syncs from GAS)
-  renderMemoCards();
+  // Render memo panel (isCancelled filter handles GAS re-sync)
+  renderMemoPanel();
   if(selDate&&fmtISO(selDate)===c.date){ renderSlots(); }
 
   // Fire GAS cancel in background (best-effort)
