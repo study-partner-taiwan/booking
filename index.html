@@ -1177,7 +1177,7 @@ function doCancel(){
       }),
       redirect:'follow'
     }).then(r=>r.text()).then(txt=>{
-      try{const res=JSON.parse(txt);onDone(res&&res.status==='ok')}catch(e){onDone(true)}
+      onDone(true)
     }).catch(()=>onDone(true));
   }else{
     onDone(false);
