@@ -815,7 +815,7 @@ function saveCfg(){try{localStorage.setItem('kou_bk',JSON.stringify(CFG))}catch(
 // ================ STATE ================
 let weekStart=getWeekStart(new Date());
 let selDate=null,selSlot=null;
-let currentUser={name:'',email:''};
+let currentUser={name:'',email:'',accountId:''};
 
 function getWeekStart(d){const r=new Date(d);r.setHours(0,0,0,0);const day=r.getDay();r.setDate(r.getDate()-(day===0?6:day-1));return r}
 function fmtISO(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
@@ -865,7 +865,7 @@ function doLogin(e){
   }).catch(()=>{hideLoginError();showLoginError('連線失敗，請稍後再試','接続エラー、後でもう一度お試しください')});
 }
 function doLogout(){
-  currentUser={name:'',email:''};
+  currentUser={name:'',email:'',accountId:''};
   isAdmin=false;
   try{localStorage.removeItem('kou_user')}catch(e){}
   hide('step1');hide('step2');show('step0');
@@ -892,12 +892,26 @@ function getMemoKey(date,start){return`memo_${normEmail(currentUser.email)}_${da
 function getTeacherMemoKey(date,start){return`teacher_memo_${date}_${start}`}
 
 // Per-user booking storage (independent of CFG for reliability)
-function getUserBkKey(){return`kou_ubk_${normEmail(currentUser.email)}`}
+function getUserBkKey(){
+  if(currentUser.accountId) return`kou_ubk_${currentUser.accountId}`;
+  return`kou_ubk_${normEmail(currentUser.email)}`;
+}
 function loadUserBookings(){
   try{return JSON.parse(localStorage.getItem(getUserBkKey())||'[]')}catch(e){return[]}
 }
+function _filterMyBookings(allBk){
+  const aid=currentUser.accountId||'';
+  const ce=normEmail(currentUser.email);
+  if(aid){
+    const byId=allBk.filter(b=>(b.accountId||'')===aid);
+    if(byId.length) return byId;
+  }
+  if(ce) return allBk.filter(b=>normEmail(b.email)===ce);
+  return [];
+}
 function saveUserBooking(bk){
   const arr=loadUserBookings();
+  if(currentUser.accountId && !bk.accountId) bk.accountId=currentUser.accountId;
   arr.push(bk);
   try{localStorage.setItem(getUserBkKey(),JSON.stringify(arr))}catch(e){}
 }
@@ -1186,7 +1200,7 @@ function tryAutoLogin(){
     const s=localStorage.getItem('kou_user');
     if(s){
       const u=JSON.parse(s);
-      if(u.name&&u.email){
+      if(u.accountId||(u.name&&u.email)){
         currentUser=u;enterCalendar();return true;
       }
     }
@@ -1345,7 +1359,7 @@ function doBook(){
 
   const L=I18N[LANG];
   const data={
-    name:currentUser.name,email:currentUser.email,
+    name:currentUser.name,email:currentUser.email,accountId:currentUser.accountId||'',
     date:fmtISO(selDate),
     dateDisp:`${selDate.getFullYear()}/${selDate.getMonth()+1}/${selDate.getDate()} (${L.dayNames[selDate.getDay()]})`,
     time:document.getElementById('cfTime').textContent,slot:selSlot
