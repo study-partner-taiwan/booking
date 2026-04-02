@@ -1,4 +1,4 @@
-Z x <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
@@ -810,7 +810,7 @@ const DEF={
 };
 let CFG=loadCfg();
 function loadCfg(){try{const s=localStorage.getItem('kou_bk');if(s){const c=JSON.parse(s);return{...DEF,...c}}}catch(e){}return{...DEF}}
-function saveCfg(){try{localStorage.setItem('kou_bk',JSON.stringify(CFG))}catch(e){}}
+function saveCfg(){try{const c={...CFG};delete c.bookings;localStorage.setItem('kou_bk',JSON.stringify(c))}catch(e){}}
 
 // ================ STATE ================
 let weekStart=getWeekStart(new Date());
@@ -867,6 +867,7 @@ function doLogin(e){
 function doLogout(){
   currentUser={name:'',email:'',accountId:''};
   isAdmin=false;
+  CFG.bookings=[];saveCfg();
   try{localStorage.removeItem('kou_user')}catch(e){}
   hide('step1');hide('step2');show('step0');
   document.getElementById('loginAccountId').value='';
@@ -1004,13 +1005,13 @@ function renderMemoPanel(){
 
   // Fetch bookings + memos from server, then render
   const url=CFG.scriptUrl;
-  if(url&&currentUser.email){
+  if(url&&(currentUser.email||currentUser.accountId)){
     Promise.all([
       fetch(url+'?action=getBookings',{redirect:'follow'}).then(r=>r.json()).catch(()=>null),
       fetchServerMemos()
     ]).then(([bkData])=>{
       if(bkData&&bkData.status==='ok'){
-        CFG.bookings=bkData.bookings.map(b=>({name:b.name,email:b.email,date:b.date,start:b.start,end:b.end,dateDisp:b.dateDisp,time:b.start+' - '+b.end,gcal:b.gcal})).filter(b=>!isCancelled(b.date,b.start));
+        CFG.bookings=bkData.bookings.map(b=>({name:b.name,email:b.email,accountId:b.accountId||'',date:b.date,start:b.start,end:b.end,dateDisp:b.dateDisp,time:b.start+' - '+b.end,gcal:b.gcal})).filter(b=>!isCancelled(b.date,b.start));
         const ce=normEmail(currentUser.email);
         const myBk=CFG.bookings.filter(b=>normEmail(b.email)===ce);
         try{localStorage.setItem(getUserBkKey(),JSON.stringify(myBk))}catch(x){}
@@ -1518,7 +1519,7 @@ function renderAdBookings(){
       list.appendChild(item);
     });
     // Also update CFG.bookings with server data for local consistency
-    CFG.bookings=bkData.bookings.map(b=>({name:b.name,email:b.email,date:b.date,start:b.start,end:b.end,dateDisp:b.dateDisp,time:b.start+' - '+b.end,gcal:b.gcal}));
+    CFG.bookings=bkData.bookings.map(b=>({name:b.name,email:b.email,accountId:b.accountId||'',date:b.date,start:b.start,end:b.end,dateDisp:b.dateDisp,time:b.start+' - '+b.end,gcal:b.gcal}));
     saveCfg();
   }).catch(e=>{
     list.innerHTML=`<div class="bk-empty">${LANG==='zh'?'載入失敗，請檢查網路連線':'読み込み失敗。ネットワークを確認してください'}</div>`;
@@ -1648,7 +1649,7 @@ function loadAdmBookings(){
     if(bkData.status==='ok'){
       admBookingsData=bkData.bookings||[];
       // Also cache in CFG
-      CFG.bookings=admBookingsData.map(b=>({name:b.name,email:b.email,date:b.date,start:b.start,end:b.end,dateDisp:b.dateDisp,time:b.start+' - '+b.end,gcal:b.gcal}));
+      CFG.bookings=admBookingsData.map(b=>({name:b.name,email:b.email,accountId:b.accountId||'',date:b.date,start:b.start,end:b.end,dateDisp:b.dateDisp,time:b.start+' - '+b.end,gcal:b.gcal}));
       saveCfg();
     }else{
       admBookingsData=(CFG.bookings||[]).slice();
